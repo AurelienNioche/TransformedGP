@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import itertools as it
 import pandas as pd
@@ -10,11 +11,21 @@ import opt
 # Seed
 np.random.seed(123)
 
+FIG_FOLDER = "fig"
+os.makedirs(FIG_FOLDER, exist_ok=True)
+
+REWARDS = "reward_only", "reward_and_certainty"
+
+# Parameters
+tau = 0.1
+steps = np.linspace(0.01, 0.99, 10)
+reward_f = REWARDS[0]
 
 
-def plot_u(x_steps, x_val):
-
-    # Model-free utility function
+def plot_u(x_val):
+    """
+        Model-free utility function
+    """
 
     # Create fig
     fig, ax = plt.subplots(figsize=(6, 6))
@@ -23,10 +34,11 @@ def plot_u(x_steps, x_val):
     x_min, x_max = 0, 1
     y_min, y_max = 0, 1
 
-    # Plot estimate
-    ax.plot(x_steps, x_val)
+    # Plot function
+    ax.plot(steps, x_val)
 
-    ax.plot([0, 1], [0, 1], alpha=0.5, ls="--")
+    # Plot identity
+    ax.plot([0, 1], [0, 1], alpha=0.5, ls="--", color="black")
 
     # Pimp your plot
     ax.set_xlabel('x')
@@ -35,16 +47,18 @@ def plot_u(x_steps, x_val):
     ax.set_xlim(x_min, x_max)
     ax.set_ylim(y_min, y_max)
 
-    coord = np.vstack((x_steps, x_val))
+    coord = np.vstack((steps, x_val))
     ax.scatter(coord[0], coord[1], alpha=0.5)
 
+    plt.savefig(f"{FIG_FOLDER}/u_fmincon_{reward_f}.png", dpi=200)
     plt.show()
 
 
-def plot_prob_function(p_steps, p_val):
+def plot_prob_function(p_val):
 
-    # Model-free probability function
-
+    """
+        Model-free probability function
+    """
     # Create fig
     fig, ax = plt.subplots(figsize=(6, 6))
 
@@ -52,10 +66,11 @@ def plot_prob_function(p_steps, p_val):
     x_min, x_max = 0, 1
     y_min, y_max = 0, 1
 
-    # Plot estimate
-    ax.plot(p_steps, p_val)
+    # Plot function
+    ax.plot(steps, p_val)
 
-    ax.plot([0, 1], [0, 1], alpha=0.5, ls="--")
+    # Plot identity
+    ax.plot([0, 1], [0, 1], alpha=0.5, ls="--", color="black")
 
     # Pimp your plot
     ax.set_xlabel('p')
@@ -64,18 +79,18 @@ def plot_prob_function(p_steps, p_val):
     ax.set_xlim(x_min, x_max)
     ax.set_ylim(y_min, y_max)
 
-    coord = np.vstack((p_steps, p_val))
+    coord = np.vstack((steps, p_val))
     ax.scatter(coord[0], coord[1], alpha=0.5)
 
+    plt.savefig(f"{FIG_FOLDER}/prob_fmincon_{reward_f}.png", dpi=200)
     plt.show()
 
 
-def plot_softmax(tau):
+def plot_softmax():
 
     # Softmax function given the difference of value between 2 options
-    def f(v, tau):
+    def f(v):
         return expit(v / tau)
-
 
     # Create fig
     fig, ax = plt.subplots(figsize=(6, 6))
@@ -87,11 +102,8 @@ def plot_softmax(tau):
     # Generate x-values
     x = np.linspace(x_min, x_max, 100)
 
-    # Plot estimate
-    # ax.plot(x, f(x, tau_est), label="fit")
-
-    # Plot truth
-    ax.plot(x, f(x, tau), ls=':', label='constraint', color="red")
+    # Plot function
+    ax.plot(x, f(x), ls=':', label='constraint', color="red")
 
     # Pimp your plot
     ax.set_xlabel('$EU(L_1) - EU(L_2)$')
@@ -101,20 +113,19 @@ def plot_softmax(tau):
     ax.set_ylim(y_min, y_max)
     ax.legend()
 
+    plt.savefig(f"{FIG_FOLDER}/softmax_fmincon_{reward_f}.png", dpi=200)
     plt.show()
 
 
 def matlab_objective(param):
 
     steps = np.linspace(0.01, 0.99, 10)
-    tau = 0.11
-    reward_f = "reward_and_certainty"
 
     task = pd.DataFrame(np.array(list(it.product(steps, repeat=4))),
                         columns=["p0", "x0", "p1", "x1"])
 
-    task = task[~((task.p0 > task.p1) & (task.x0 > task.x1))]
-    task = task[~((task.p1 > task.p0) & (task.x1 > task.x0))]
+    task = task[~((task.p0 >= task.p1) & (task.x0 >= task.x1))]
+    task = task[~((task.p1 >= task.p0) & (task.x1 >= task.x0))]
     task.reset_index(inplace=True, drop=True)
 
     p = np.vstack((task.p0.values, task.p1.values)).T
@@ -138,25 +149,28 @@ def matlab_objective(param):
 
     for i in range(n_trial):
         for j in range(n_option):
-            su_ij = uf[x[i, j]]
-            sp_ij = pf[p[i, j]]
+
+            x_ij = x[i, j]
+            p_ij = p[i, j]
+
+            su_ij = uf[x_ij]
+            sp_ij = pf[p_ij]
             su[i, j] = su_ij
             sp[i, j] = sp_ij
 
     seu = sp * su
 
-    p_choice = np.exp(seu.T / tau)
-    p_choice /= p_choice.sum(axis=0)
-    p_choice = p_choice.T
+    p_choice1 = expit((seu[:, 1] - seu[:, 0]) / tau)
+    rand = np.random.random(size=n_trial)
+    c = np.zeros(n_trial, dtype=int)
+    c[:] = p_choice1 > rand
 
     r = np.zeros(n_trial)
     for i in range(n_trial):
 
-        # c = int(p_choice[1] > p_choice[0])
-        c = np.random.choice(np.arange(n_option), p=p_choice[i])
-
-        p_c = p[i, c]
-        x_c = x[i, c]
+        ci = c[i]
+        p_c = p[i, ci]
+        x_c = x[i, ci]
 
         if reward_f == "reward_only":
             r[i] = p_c * x_c
@@ -168,10 +182,10 @@ def matlab_objective(param):
         else:
             raise Exception
 
-    return - r.sum() * 1000
+    return - r.sum()
 
 
-def matlab_optimize(steps):
+def matlab_optimize():
 
     n_param = len(steps) * 2
 
@@ -180,7 +194,7 @@ def matlab_optimize(steps):
     x0 = np.hstack((steps, steps))
     lb = np.zeros(n_param)
     ub = np.ones(n_param)
-    param, ll, exit_flat = opt.fmincon("tamere.matlab_objective",
+    param, ll, exit_flat = opt.fmincon("using_matlab.matlab_objective",
                                        x0=x0, lb=lb, ub=ub)
     opt.stop()
 
@@ -189,12 +203,11 @@ def matlab_optimize(steps):
 
 def main():
 
-    steps = np.linspace(0.01, 0.99, 10)
+    param = matlab_optimize()
 
-    param = matlab_optimize(steps)
-
-    plot_u(x_steps=steps, x_val=param[:len(steps)])
-    plot_prob_function(p_steps=steps, p_val=param[len(steps):])
+    plot_u(param[:len(steps)])
+    plot_prob_function(param[len(steps):])
+    plot_softmax()
 
 
 if __name__ == "__main__":
