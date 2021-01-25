@@ -133,3 +133,11 @@ dmypy.json
 
 # Figures
 fig/
+
+# Original code from Juechems et al.
+addcode.m
+Figures_Juechems_et_al_2019.m
+VBA-toolbox-master/
+code/
+data/
+README_PT_optimality.md
