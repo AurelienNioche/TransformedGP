@@ -143,5 +143,12 @@ data/
 README_PT_optimality.md
 /GP Showdown.ipynb
 
+# GPy library
 GPy/
+
+# Backup folders
+bkp/
 backup/
+
+# Tuto gaussian process in pymc3
+gp_regression/
