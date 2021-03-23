@@ -152,3 +152,6 @@ backup/
 
 # Tuto gaussian process in pymc3
 gp_regression/
+
+# Ville's scripts
+DiscrepancyModels-Ville/
