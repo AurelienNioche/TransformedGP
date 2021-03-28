@@ -59,38 +59,36 @@ using stan::math::pow;
 stan::math::profile_map profiles__;
 static int current_statement__= 0;
 static const std::vector<string> locations_array__ = {" (found before start of program)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 19, column 2 to column 30)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 20, column 2 to column 27)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 21, column 2 to column 16)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 26, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 26, column 2 to column 16)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 27, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 27, column 2 to column 23)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 28, column 9 to column 12)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 28, column 2 to column 19)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 21, column 2 to column 30)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 22, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 23, column 2 to column 16)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 28, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 28, column 2 to column 16)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 29, column 9 to column 12)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 29, column 2 to column 19)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 30, column 9 to column 12)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 30, column 2 to column 22)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 31, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 31, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 31, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 30, column 2 to column 19)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 31, column 9 to column 12)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 31, column 2 to column 22)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 32, column 9 to column 10)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 32, column 12 to column 13)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 32, column 2 to column 17)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 33, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 33, column 2 to column 14)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 35, column 2 to column 35)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 36, column 2 to column 32)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 37, column 2 to column 21)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 39, column 2 to column 79)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 40, column 2 to column 28)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 42, column 2 to column 17)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 44, column 2 to column 15)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 45, column 2 to column 22)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 33, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 33, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 34, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 34, column 2 to column 14)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 36, column 2 to column 31)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 37, column 2 to column 28)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 38, column 2 to column 21)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 40, column 2 to column 89)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 41, column 2 to column 28)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 43, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 45, column 2 to column 15)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 46, column 2 to column 22)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 47, column 2 to column 24)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 48, column 2 to column 37)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 47, column 2 to column 22)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 48, column 2 to column 24)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 49, column 2 to column 37)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 2, column 2 to column 17)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 3, column 2 to column 19)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 4, column 27 to column 28)",
@@ -103,16 +101,21 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 7, column 2 to column 19)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 8, column 14 to column 17)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 8, column 2 to column 19)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 9, column 2 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 10, column 2 to column 11)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 11, column 2 to column 14)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 9, column 2 to column 11)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 10, column 2 to column 14)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 11, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 11, column 2 to column 15)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 12, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 12, column 2 to column 15)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 12, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 12, column 2 to column 29)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 15, column 9 to column 10)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 15, column 12 to column 13)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 15, column 2 to column 27)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 16, column 2 to column 51)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 21, column 9 to column 10)"};
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 16, column 15 to column 16)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 16, column 2 to column 18)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 17, column 2 to column 51)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 18, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/gp_model.stan', line 23, column 9 to column 10)"};
 
 
 
@@ -122,15 +125,16 @@ class gp_model_model final : public model_base_crtp<gp_model_model> {
   int N;
   int N_y;
   Eigen::Matrix<double, -1, 1> p;
-  Eigen::Matrix<double, -1, 1> x;
+  Eigen::Matrix<double, -1, 1> X;
   std::vector<int> y;
   std::vector<int> belong0;
   std::vector<int> belong1;
-  double theta;
   double tau;
   double jitter;
   Eigen::Matrix<double, -1, 1> mu;
+  Eigen::Matrix<double, -1, -1> kernel_factor;
   Eigen::Matrix<double, -1, -1> diag_jitter;
+  std::vector<double> X_array;
  
  public:
   ~gp_model_model() { }
@@ -159,29 +163,29 @@ class gp_model_model final : public model_base_crtp<gp_model_model> {
       pos__ = std::numeric_limits<int>::min();
       
       pos__ = 1;
-      current_statement__ = 33;
+      current_statement__ = 31;
       context__.validate_dims("data initialization","N","int",
           context__.to_vec());
       N = std::numeric_limits<int>::min();
       
-      current_statement__ = 33;
+      current_statement__ = 31;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 33;
-      current_statement__ = 33;
+      current_statement__ = 31;
+      current_statement__ = 31;
       check_greater_or_equal(function__, "N", N, 0);
-      current_statement__ = 34;
+      current_statement__ = 32;
       context__.validate_dims("data initialization","N_y","int",
           context__.to_vec());
       N_y = std::numeric_limits<int>::min();
       
-      current_statement__ = 34;
+      current_statement__ = 32;
       N_y = context__.vals_i("N_y")[(1 - 1)];
-      current_statement__ = 34;
-      current_statement__ = 34;
+      current_statement__ = 32;
+      current_statement__ = 32;
       check_greater_or_equal(function__, "N_y", N_y, 0);
-      current_statement__ = 35;
+      current_statement__ = 33;
       validate_non_negative_index("p", "N", N);
-      current_statement__ = 36;
+      current_statement__ = 34;
       context__.validate_dims("data initialization","p","double",
           context__.to_vec(N));
       p = Eigen::Matrix<double, -1, 1>(N);
@@ -189,116 +193,109 @@ class gp_model_model final : public model_base_crtp<gp_model_model> {
       
       {
         std::vector<local_scalar_t__> p_flat__;
-        current_statement__ = 36;
+        current_statement__ = 34;
         assign(p_flat__, nil_index_list(), context__.vals_r("p"),
           "assigning variable p_flat__");
-        current_statement__ = 36;
+        current_statement__ = 34;
         pos__ = 1;
-        current_statement__ = 36;
+        current_statement__ = 34;
         for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-          current_statement__ = 36;
+          current_statement__ = 34;
           assign(p, cons_list(index_uni(sym1__), nil_index_list()),
             p_flat__[(pos__ - 1)], "assigning variable p");
+          current_statement__ = 34;
+          pos__ = (pos__ + 1);}
+      }
+      current_statement__ = 34;
+      for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
+        current_statement__ = 34;
+        current_statement__ = 34;
+        check_greater_or_equal(function__, "p[sym1__]", p[(sym1__ - 1)], 0);}
+      current_statement__ = 34;
+      for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
+        current_statement__ = 34;
+        current_statement__ = 34;
+        check_less_or_equal(function__, "p[sym1__]", p[(sym1__ - 1)], 1);}
+      current_statement__ = 35;
+      validate_non_negative_index("X", "N", N);
+      current_statement__ = 36;
+      context__.validate_dims("data initialization","X","double",
+          context__.to_vec(N));
+      X = Eigen::Matrix<double, -1, 1>(N);
+      stan::math::fill(X, std::numeric_limits<double>::quiet_NaN());
+      
+      {
+        std::vector<local_scalar_t__> X_flat__;
+        current_statement__ = 36;
+        assign(X_flat__, nil_index_list(), context__.vals_r("X"),
+          "assigning variable X_flat__");
+        current_statement__ = 36;
+        pos__ = 1;
+        current_statement__ = 36;
+        for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
+          current_statement__ = 36;
+          assign(X, cons_list(index_uni(sym1__), nil_index_list()),
+            X_flat__[(pos__ - 1)], "assigning variable X");
           current_statement__ = 36;
           pos__ = (pos__ + 1);}
       }
-      current_statement__ = 36;
-      for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-        current_statement__ = 36;
-        current_statement__ = 36;
-        check_greater_or_equal(function__, "p[sym1__]", p[(sym1__ - 1)], 0);}
-      current_statement__ = 36;
-      for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-        current_statement__ = 36;
-        current_statement__ = 36;
-        check_less_or_equal(function__, "p[sym1__]", p[(sym1__ - 1)], 1);}
       current_statement__ = 37;
-      validate_non_negative_index("x", "N", N);
-      current_statement__ = 38;
-      context__.validate_dims("data initialization","x","double",
-          context__.to_vec(N));
-      x = Eigen::Matrix<double, -1, 1>(N);
-      stan::math::fill(x, std::numeric_limits<double>::quiet_NaN());
-      
-      {
-        std::vector<local_scalar_t__> x_flat__;
-        current_statement__ = 38;
-        assign(x_flat__, nil_index_list(), context__.vals_r("x"),
-          "assigning variable x_flat__");
-        current_statement__ = 38;
-        pos__ = 1;
-        current_statement__ = 38;
-        for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-          current_statement__ = 38;
-          assign(x, cons_list(index_uni(sym1__), nil_index_list()),
-            x_flat__[(pos__ - 1)], "assigning variable x");
-          current_statement__ = 38;
-          pos__ = (pos__ + 1);}
-      }
-      current_statement__ = 39;
       validate_non_negative_index("y", "N_y", N_y);
-      current_statement__ = 40;
+      current_statement__ = 38;
       context__.validate_dims("data initialization","y","int",
           context__.to_vec(N_y));
       y = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 40;
+      current_statement__ = 38;
       assign(y, nil_index_list(), context__.vals_i("y"),
         "assigning variable y");
-      current_statement__ = 40;
+      current_statement__ = 38;
       for (int sym1__ = 1; sym1__ <= N_y; ++sym1__) {
-        current_statement__ = 40;
-        current_statement__ = 40;
+        current_statement__ = 38;
+        current_statement__ = 38;
         check_greater_or_equal(function__, "y[sym1__]", y[(sym1__ - 1)], 0);}
-      current_statement__ = 40;
+      current_statement__ = 38;
       for (int sym1__ = 1; sym1__ <= N_y; ++sym1__) {
-        current_statement__ = 40;
-        current_statement__ = 40;
+        current_statement__ = 38;
+        current_statement__ = 38;
         check_less_or_equal(function__, "y[sym1__]", y[(sym1__ - 1)], 1);}
-      current_statement__ = 41;
+      current_statement__ = 39;
       validate_non_negative_index("belong0", "N_y", N_y);
-      current_statement__ = 42;
+      current_statement__ = 40;
       context__.validate_dims("data initialization","belong0","int",
           context__.to_vec(N_y));
       belong0 = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 42;
+      current_statement__ = 40;
       assign(belong0, nil_index_list(), context__.vals_i("belong0"),
         "assigning variable belong0");
-      current_statement__ = 43;
+      current_statement__ = 41;
       validate_non_negative_index("belong1", "N_y", N_y);
-      current_statement__ = 44;
+      current_statement__ = 42;
       context__.validate_dims("data initialization","belong1","int",
           context__.to_vec(N_y));
       belong1 = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 44;
+      current_statement__ = 42;
       assign(belong1, nil_index_list(), context__.vals_i("belong1"),
         "assigning variable belong1");
-      current_statement__ = 45;
-      context__.validate_dims("data initialization","theta","double",
-          context__.to_vec());
-      theta = std::numeric_limits<double>::quiet_NaN();
-      
-      current_statement__ = 45;
-      theta = context__.vals_r("theta")[(1 - 1)];
-      current_statement__ = 46;
+      current_statement__ = 43;
       context__.validate_dims("data initialization","tau","double",
           context__.to_vec());
       tau = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 46;
+      current_statement__ = 43;
       tau = context__.vals_r("tau")[(1 - 1)];
-      current_statement__ = 47;
+      current_statement__ = 44;
       context__.validate_dims("data initialization","jitter","double",
           context__.to_vec());
       jitter = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 47;
+      current_statement__ = 44;
       jitter = context__.vals_r("jitter")[(1 - 1)];
-      current_statement__ = 48;
+      current_statement__ = 45;
       validate_non_negative_index("mu", "N", N);
-      current_statement__ = 49;
+      current_statement__ = 46;
       context__.validate_dims("data initialization","mu","double",
           context__.to_vec(N));
       mu = Eigen::Matrix<double, -1, 1>(N);
@@ -306,18 +303,49 @@ class gp_model_model final : public model_base_crtp<gp_model_model> {
       
       {
         std::vector<local_scalar_t__> mu_flat__;
-        current_statement__ = 49;
+        current_statement__ = 46;
         assign(mu_flat__, nil_index_list(), context__.vals_r("mu"),
           "assigning variable mu_flat__");
+        current_statement__ = 46;
+        pos__ = 1;
+        current_statement__ = 46;
+        for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
+          current_statement__ = 46;
+          assign(mu, cons_list(index_uni(sym1__), nil_index_list()),
+            mu_flat__[(pos__ - 1)], "assigning variable mu");
+          current_statement__ = 46;
+          pos__ = (pos__ + 1);}
+      }
+      current_statement__ = 47;
+      validate_non_negative_index("kernel_factor", "N", N);
+      current_statement__ = 48;
+      validate_non_negative_index("kernel_factor", "N", N);
+      current_statement__ = 49;
+      context__.validate_dims("data initialization","kernel_factor","double",
+          context__.to_vec(N, N));
+      kernel_factor = Eigen::Matrix<double, -1, -1>(N, N);
+      stan::math::fill(kernel_factor, std::numeric_limits<double>::quiet_NaN());
+      
+      {
+        std::vector<local_scalar_t__> kernel_factor_flat__;
+        current_statement__ = 49;
+        assign(kernel_factor_flat__, nil_index_list(),
+          context__.vals_r("kernel_factor"),
+          "assigning variable kernel_factor_flat__");
         current_statement__ = 49;
         pos__ = 1;
         current_statement__ = 49;
         for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
           current_statement__ = 49;
-          assign(mu, cons_list(index_uni(sym1__), nil_index_list()),
-            mu_flat__[(pos__ - 1)], "assigning variable mu");
-          current_statement__ = 49;
-          pos__ = (pos__ + 1);}
+          for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
+            current_statement__ = 49;
+            assign(kernel_factor,
+              cons_list(index_uni(sym2__),
+                cons_list(index_uni(sym1__), nil_index_list())),
+              kernel_factor_flat__[(pos__ - 1)],
+              "assigning variable kernel_factor");
+            current_statement__ = 49;
+            pos__ = (pos__ + 1);}}
       }
       current_statement__ = 50;
       validate_non_negative_index("diag_jitter", "N", N);
@@ -328,9 +356,17 @@ class gp_model_model final : public model_base_crtp<gp_model_model> {
       stan::math::fill(diag_jitter, std::numeric_limits<double>::quiet_NaN());
       
       current_statement__ = 53;
+      validate_non_negative_index("X_array", "N", N);
+      current_statement__ = 54;
+      X_array = std::vector<double>(N, std::numeric_limits<double>::quiet_NaN());
+      
+      current_statement__ = 55;
       assign(diag_jitter, nil_index_list(),
         diag_matrix(rep_vector(jitter, N)), "assigning variable diag_jitter");
-      current_statement__ = 54;
+      current_statement__ = 56;
+      assign(X_array, nil_index_list(), to_array_1d(X),
+        "assigning variable X_array");
+      current_statement__ = 57;
       validate_non_negative_index("eta", "N", N);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -406,82 +442,78 @@ class gp_model_model final : public model_base_crtp<gp_model_model> {
         stan::math::fill(seu, DUMMY_VAR__);
         
         current_statement__ = 6;
-        validate_non_negative_index("seu_sorted", "N", N);
-        Eigen::Matrix<local_scalar_t__, -1, 1> seu_sorted;
-        seu_sorted = Eigen::Matrix<local_scalar_t__, -1, 1>(N);
-        stan::math::fill(seu_sorted, DUMMY_VAR__);
-        
-        current_statement__ = 8;
         validate_non_negative_index("seu0", "N_y", N_y);
         Eigen::Matrix<local_scalar_t__, -1, 1> seu0;
         seu0 = Eigen::Matrix<local_scalar_t__, -1, 1>(N_y);
         stan::math::fill(seu0, DUMMY_VAR__);
         
-        current_statement__ = 10;
+        current_statement__ = 8;
         validate_non_negative_index("seu1", "N_y", N_y);
         Eigen::Matrix<local_scalar_t__, -1, 1> seu1;
         seu1 = Eigen::Matrix<local_scalar_t__, -1, 1>(N_y);
         stan::math::fill(seu1, DUMMY_VAR__);
         
-        current_statement__ = 12;
+        current_statement__ = 10;
         validate_non_negative_index("diff_eu", "N_y", N_y);
         Eigen::Matrix<local_scalar_t__, -1, 1> diff_eu;
         diff_eu = Eigen::Matrix<local_scalar_t__, -1, 1>(N_y);
         stan::math::fill(diff_eu, DUMMY_VAR__);
         
-        current_statement__ = 14;
+        current_statement__ = 12;
         validate_non_negative_index("L", "N", N);
-        current_statement__ = 15;
+        current_statement__ = 13;
         validate_non_negative_index("L", "N", N);
         Eigen::Matrix<local_scalar_t__, -1, -1> L;
         L = Eigen::Matrix<local_scalar_t__, -1, -1>(N, N);
         stan::math::fill(L, DUMMY_VAR__);
         
-        current_statement__ = 17;
+        current_statement__ = 15;
         validate_non_negative_index("K", "N", N);
-        current_statement__ = 18;
+        current_statement__ = 16;
         validate_non_negative_index("K", "N", N);
         Eigen::Matrix<local_scalar_t__, -1, -1> K;
         K = Eigen::Matrix<local_scalar_t__, -1, -1>(N, N);
         stan::math::fill(K, DUMMY_VAR__);
         
-        current_statement__ = 20;
+        current_statement__ = 18;
         validate_non_negative_index("f", "N", N);
         Eigen::Matrix<local_scalar_t__, -1, 1> f;
         f = Eigen::Matrix<local_scalar_t__, -1, 1>(N);
         stan::math::fill(f, DUMMY_VAR__);
         
+        current_statement__ = 20;
+        lp_accum__.add(normal_lpdf<propto__>(kernel_length, 1, 1));
+        current_statement__ = 21;
+        lp_accum__.add(normal_lpdf<propto__>(kernel_var, 1, 1));
         current_statement__ = 22;
-        lp_accum__.add(lognormal_lpdf<propto__>(kernel_length, 0, 10));
-        current_statement__ = 23;
-        lp_accum__.add(lognormal_lpdf<propto__>(kernel_var, 0, 10));
-        current_statement__ = 24;
         lp_accum__.add(std_normal_lpdf<propto__>(eta));
-        current_statement__ = 25;
+        current_statement__ = 23;
         assign(K, nil_index_list(),
-          add(gp_exp_quad_cov(to_array_1d(x), kernel_var, kernel_length),
+          add(
+            elt_multiply(kernel_factor,
+              gp_exp_quad_cov(X_array, kernel_var, kernel_length)),
             diag_jitter), "assigning variable K");
-        current_statement__ = 26;
+        current_statement__ = 24;
         assign(L, nil_index_list(), cholesky_decompose(K),
           "assigning variable L");
-        current_statement__ = 27;
+        current_statement__ = 25;
         assign(f, nil_index_list(), add(mu, multiply(L, eta)),
           "assigning variable f");
-        current_statement__ = 28;
+        current_statement__ = 26;
         assign(seu, nil_index_list(), elt_multiply(p, f),
           "assigning variable seu");
-        current_statement__ = 29;
+        current_statement__ = 27;
         assign(seu0, nil_index_list(),
           rvalue(seu, cons_list(index_multi(belong0), nil_index_list()),
             "seu"), "assigning variable seu0");
-        current_statement__ = 30;
+        current_statement__ = 28;
         assign(seu1, nil_index_list(),
           rvalue(seu, cons_list(index_multi(belong1), nil_index_list()),
             "seu"), "assigning variable seu1");
-        current_statement__ = 31;
+        current_statement__ = 29;
         assign(diff_eu, nil_index_list(), subtract(seu1, seu0),
           "assigning variable diff_eu");
-        current_statement__ = 32;
+        current_statement__ = 30;
         lp_accum__.add(
           bernoulli_logit_lpmf<propto__>(y, multiply(tau, diff_eu)));
       }

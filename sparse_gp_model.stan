@@ -21,6 +21,8 @@ data {
 transformed data {
   matrix[M, M] diag_jitter;
   diag_jitter = diag_matrix(rep_vector(jitter, M));
+  real X_array[N];
+  X_array = to_array_1d(X);
 }
 parameters {
   real<lower=0> kernel_length;
@@ -46,15 +48,19 @@ model {
   matrix[M, N] A;
   vector[M] v;
   
-  kernel_length ~ normal(0, 1);
-  kernel_var ~ normal(0, 1);
+  matrix[M, M] K_factor;
+  matrix[M, N] K_mp_factor;
+  
+  real Xm_array[M];
+  
+  Xm_array = to_array_1d(Xm);
+  
+  kernel_length ~ normal(1, 1);
+  kernel_var ~ normal(1, 1);
   eta ~ std_normal();
   Xm ~ uniform(0, 1);
-
-  K = gp_exp_quad_cov(to_array_1d(Xm), kernel_var, kernel_length) + diag_jitter;
-  L = cholesky_decompose(K);
-
-  // if (u_model_index == 0) {
+  
+    // if (u_model_index == 0) {
   Mm = Xm;
   Mp = X;
   //}
@@ -64,11 +70,17 @@ model {
   // }
   // else
   //  reject("u_model_index incorrect", u_model_index);
+  
+  K_factor = Mm*Mm';
+  K_mp_factor = Mm*Mp';
+
+  K = K_factor .* gp_exp_quad_cov(to_array_1d(Xm), kernel_var, kernel_length) + diag_jitter;
+  L = cholesky_decompose(K);
 
   L_dot_eta = L*eta;
   f = Mm + L_dot_eta;
 
-  K_mp = gp_exp_quad_cov(to_array_1d(Xm), to_array_1d(X), kernel_var, kernel_length);
+  K_mp = K_mp_factor .* gp_exp_quad_cov(Xm_array, X_array, kernel_var, kernel_length);
   A = mdivide_left_tri_low(L, K_mp);
   v = mdivide_left_tri_low(L, L_dot_eta);
 
