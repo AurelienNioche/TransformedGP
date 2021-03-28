@@ -60,16 +60,17 @@ model {
   eta ~ std_normal();
   Xm ~ uniform(0, 1);
   
-    // if (u_model_index == 0) {
-  Mm = Xm;
-  Mp = X;
-  //}
-  // else if (u_model_index == 1) {
-  // Mm = u_pow(Xm, theta);
-  // Mp = u_pow(X, theta);
-  // }
-  // else
-  //  reject("u_model_index incorrect", u_model_index);
+  if (u_model_index == 0) {
+    Mm = Xm;
+    Mp = X;
+  }
+  else if (u_model_index == 1) {
+    Mm = u_pow(Xm, theta);
+    Mp = u_pow(X, theta);
+  }
+  else {
+    reject("u_model_index incorrect", u_model_index);
+  }
   
   K_factor = Mm*Mm';
   K_mp_factor = Mm*Mp';
