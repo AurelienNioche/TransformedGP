@@ -59,55 +59,62 @@ using stan::math::pow;
 stan::math::profile_map profiles__;
 static int current_statement__= 0;
 static const std::vector<string> locations_array__ = {" (found before start of program)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 30, column 2 to column 30)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 31, column 2 to column 27)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 32, column 2 to column 16)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 33, column 2 to column 33)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 38, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 38, column 2 to column 16)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 39, column 9 to column 12)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 39, column 2 to column 19)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 40, column 9 to column 12)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 40, column 2 to column 19)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 41, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 41, column 2 to column 15)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 34, column 2 to column 30)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 35, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 36, column 2 to column 16)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 37, column 2 to column 33)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 42, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 42, column 2 to column 22)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 42, column 2 to column 16)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 43, column 9 to column 12)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 43, column 2 to column 22)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 44, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 44, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 44, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 43, column 2 to column 19)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 44, column 9 to column 12)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 44, column 2 to column 19)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 45, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 45, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 45, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 45, column 2 to column 15)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 46, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 46, column 2 to column 14)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 47, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 47, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 47, column 2 to column 20)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 46, column 2 to column 22)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 47, column 9 to column 12)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 47, column 2 to column 22)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 48, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 48, column 2 to column 15)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 48, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 48, column 2 to column 17)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 49, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 49, column 2 to column 22)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 49, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 49, column 2 to column 17)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 50, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 50, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 50, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 50, column 2 to column 14)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 51, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 51, column 2 to column 14)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 51, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 51, column 2 to column 20)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 52, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 52, column 2 to column 15)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 53, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 53, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 53, column 2 to column 24)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 53, column 2 to column 22)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 54, column 9 to column 10)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 54, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 54, column 2 to column 27)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 56, column 16 to column 17)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 56, column 2 to column 19)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 58, column 2 to column 29)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 60, column 2 to column 32)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 61, column 2 to column 29)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 54, column 2 to column 17)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 55, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 55, column 2 to column 14)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 57, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 57, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 57, column 2 to column 24)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 58, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 58, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 58, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 60, column 2 to column 74)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 61, column 2 to column 65)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 62, column 2 to column 21)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 63, column 2 to column 21)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 74, column 6 to column 55)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 73, column 7 to line 75, column 3)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 70, column 6 to column 28)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 71, column 6 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 69, column 31 to line 72, column 3)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 69, column 7 to line 75, column 3)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 66, column 6 to column 14)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 67, column 6 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 65, column 26 to line 68, column 3)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 65, column 2 to line 75, column 3)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 76, column 2 to column 24)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 77, column 2 to column 23)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 79, column 2 to column 20)",
@@ -116,7 +123,7 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 83, column 2 to column 28)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 85, column 2 to column 20)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 86, column 2 to column 21)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 88, column 2 to column 86)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 88, column 2 to column 93)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 89, column 2 to column 36)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 90, column 2 to column 41)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 92, column 2 to column 26)",
@@ -144,16 +151,21 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 17, column 2 to column 13)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 18, column 2 to column 11)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 19, column 2 to column 14)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 20, column 2 to column 8)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 24, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 24, column 12 to column 13)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 24, column 2 to column 27)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 25, column 2 to column 51)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 26, column 15 to column 16)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 26, column 2 to column 18)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 27, column 2 to column 27)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 32, column 9 to column 10)",
-                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 33, column 27 to column 28)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 20, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 21, column 2 to column 28)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 22, column 2 to column 30)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 23, column 2 to column 31)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 24, column 2 to column 8)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 25, column 2 to column 38)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 28, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 28, column 12 to column 13)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 28, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 29, column 2 to column 51)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 30, column 15 to column 16)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 30, column 2 to column 18)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 31, column 2 to column 27)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 36, column 9 to column 10)",
+                                                      " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 37, column 27 to column 28)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 3, column 4 to column 25)",
                                                       " (in '/Users/aureliennioche/Documents/PythonProjects/CogModelDiscrepancy/sparse_gp_cpc.stan', line 2, column 37 to line 4, column 3)"};
 
@@ -171,7 +183,7 @@ u_pow(const T0__& x_arg__, const T1__& theta, std::ostream* pstream__) {
   (void) DUMMY_VAR__;  // suppress unused var warning
   
   try {
-    current_statement__ = 96;
+    current_statement__ = 108;
     return pow(x, theta);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -206,7 +218,12 @@ class sparse_gp_cpc_model final : public model_base_crtp<sparse_gp_cpc_model> {
   double theta;
   double tau;
   double jitter;
+  double kernel_var_prior_mu;
+  double kernel_var_prior_std;
+  double kernel_length_prior_mu;
+  double kernel_length_prior_std;
   int M;
+  int u_model_index;
   Eigen::Matrix<double, -1, -1> diag_jitter;
   std::vector<double> X_array;
  
@@ -237,29 +254,29 @@ class sparse_gp_cpc_model final : public model_base_crtp<sparse_gp_cpc_model> {
       pos__ = std::numeric_limits<int>::min();
       
       pos__ = 1;
-      current_statement__ = 67;
+      current_statement__ = 74;
       context__.validate_dims("data initialization","N","int",
           context__.to_vec());
       N = std::numeric_limits<int>::min();
       
-      current_statement__ = 67;
+      current_statement__ = 74;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 67;
-      current_statement__ = 67;
+      current_statement__ = 74;
+      current_statement__ = 74;
       check_greater_or_equal(function__, "N", N, 0);
-      current_statement__ = 68;
+      current_statement__ = 75;
       context__.validate_dims("data initialization","N_y","int",
           context__.to_vec());
       N_y = std::numeric_limits<int>::min();
       
-      current_statement__ = 68;
+      current_statement__ = 75;
       N_y = context__.vals_i("N_y")[(1 - 1)];
-      current_statement__ = 68;
-      current_statement__ = 68;
+      current_statement__ = 75;
+      current_statement__ = 75;
       check_greater_or_equal(function__, "N_y", N_y, 0);
-      current_statement__ = 69;
+      current_statement__ = 76;
       validate_non_negative_index("p", "N", N);
-      current_statement__ = 70;
+      current_statement__ = 77;
       context__.validate_dims("data initialization","p","double",
           context__.to_vec(N));
       p = Eigen::Matrix<double, -1, 1>(N);
@@ -267,32 +284,32 @@ class sparse_gp_cpc_model final : public model_base_crtp<sparse_gp_cpc_model> {
       
       {
         std::vector<local_scalar_t__> p_flat__;
-        current_statement__ = 70;
+        current_statement__ = 77;
         assign(p_flat__, nil_index_list(), context__.vals_r("p"),
           "assigning variable p_flat__");
-        current_statement__ = 70;
+        current_statement__ = 77;
         pos__ = 1;
-        current_statement__ = 70;
+        current_statement__ = 77;
         for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-          current_statement__ = 70;
+          current_statement__ = 77;
           assign(p, cons_list(index_uni(sym1__), nil_index_list()),
             p_flat__[(pos__ - 1)], "assigning variable p");
-          current_statement__ = 70;
+          current_statement__ = 77;
           pos__ = (pos__ + 1);}
       }
-      current_statement__ = 70;
+      current_statement__ = 77;
       for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-        current_statement__ = 70;
-        current_statement__ = 70;
+        current_statement__ = 77;
+        current_statement__ = 77;
         check_greater_or_equal(function__, "p[sym1__]", p[(sym1__ - 1)], 0);}
-      current_statement__ = 70;
+      current_statement__ = 77;
       for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-        current_statement__ = 70;
-        current_statement__ = 70;
+        current_statement__ = 77;
+        current_statement__ = 77;
         check_less_or_equal(function__, "p[sym1__]", p[(sym1__ - 1)], 1);}
-      current_statement__ = 71;
+      current_statement__ = 78;
       validate_non_negative_index("X", "N", N);
-      current_statement__ = 72;
+      current_statement__ = 79;
       context__.validate_dims("data initialization","X","double",
           context__.to_vec(N));
       X = Eigen::Matrix<double, -1, 1>(N);
@@ -300,129 +317,173 @@ class sparse_gp_cpc_model final : public model_base_crtp<sparse_gp_cpc_model> {
       
       {
         std::vector<local_scalar_t__> X_flat__;
-        current_statement__ = 72;
+        current_statement__ = 79;
         assign(X_flat__, nil_index_list(), context__.vals_r("X"),
           "assigning variable X_flat__");
-        current_statement__ = 72;
+        current_statement__ = 79;
         pos__ = 1;
-        current_statement__ = 72;
+        current_statement__ = 79;
         for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-          current_statement__ = 72;
+          current_statement__ = 79;
           assign(X, cons_list(index_uni(sym1__), nil_index_list()),
             X_flat__[(pos__ - 1)], "assigning variable X");
-          current_statement__ = 72;
+          current_statement__ = 79;
           pos__ = (pos__ + 1);}
       }
-      current_statement__ = 73;
+      current_statement__ = 80;
       validate_non_negative_index("y", "N_y", N_y);
-      current_statement__ = 74;
+      current_statement__ = 81;
       context__.validate_dims("data initialization","y","int",
           context__.to_vec(N_y));
       y = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 74;
+      current_statement__ = 81;
       assign(y, nil_index_list(), context__.vals_i("y"),
         "assigning variable y");
-      current_statement__ = 74;
+      current_statement__ = 81;
       for (int sym1__ = 1; sym1__ <= N_y; ++sym1__) {
-        current_statement__ = 74;
-        current_statement__ = 74;
+        current_statement__ = 81;
+        current_statement__ = 81;
         check_greater_or_equal(function__, "y[sym1__]", y[(sym1__ - 1)], 0);}
-      current_statement__ = 74;
+      current_statement__ = 81;
       for (int sym1__ = 1; sym1__ <= N_y; ++sym1__) {
-        current_statement__ = 74;
-        current_statement__ = 74;
+        current_statement__ = 81;
+        current_statement__ = 81;
         check_less_or_equal(function__, "y[sym1__]", y[(sym1__ - 1)], 1);}
-      current_statement__ = 75;
+      current_statement__ = 82;
       validate_non_negative_index("belong_A0", "N_y", N_y);
-      current_statement__ = 76;
+      current_statement__ = 83;
       context__.validate_dims("data initialization","belong_A0","int",
           context__.to_vec(N_y));
       belong_A0 = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 76;
+      current_statement__ = 83;
       assign(belong_A0, nil_index_list(), context__.vals_i("belong_A0"),
         "assigning variable belong_A0");
-      current_statement__ = 77;
+      current_statement__ = 84;
       validate_non_negative_index("belong_A1", "N_y", N_y);
-      current_statement__ = 78;
+      current_statement__ = 85;
       context__.validate_dims("data initialization","belong_A1","int",
           context__.to_vec(N_y));
       belong_A1 = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 78;
+      current_statement__ = 85;
       assign(belong_A1, nil_index_list(), context__.vals_i("belong_A1"),
         "assigning variable belong_A1");
-      current_statement__ = 79;
+      current_statement__ = 86;
       validate_non_negative_index("belong_B0", "N_y", N_y);
-      current_statement__ = 80;
+      current_statement__ = 87;
       context__.validate_dims("data initialization","belong_B0","int",
           context__.to_vec(N_y));
       belong_B0 = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 80;
+      current_statement__ = 87;
       assign(belong_B0, nil_index_list(), context__.vals_i("belong_B0"),
         "assigning variable belong_B0");
-      current_statement__ = 81;
+      current_statement__ = 88;
       validate_non_negative_index("belong_B1", "N_y", N_y);
-      current_statement__ = 82;
+      current_statement__ = 89;
       context__.validate_dims("data initialization","belong_B1","int",
           context__.to_vec(N_y));
       belong_B1 = std::vector<int>(N_y, std::numeric_limits<int>::min());
       
-      current_statement__ = 82;
+      current_statement__ = 89;
       assign(belong_B1, nil_index_list(), context__.vals_i("belong_B1"),
         "assigning variable belong_B1");
-      current_statement__ = 83;
+      current_statement__ = 90;
       context__.validate_dims("data initialization","theta","double",
           context__.to_vec());
       theta = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 83;
+      current_statement__ = 90;
       theta = context__.vals_r("theta")[(1 - 1)];
-      current_statement__ = 84;
+      current_statement__ = 91;
       context__.validate_dims("data initialization","tau","double",
           context__.to_vec());
       tau = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 84;
+      current_statement__ = 91;
       tau = context__.vals_r("tau")[(1 - 1)];
-      current_statement__ = 85;
+      current_statement__ = 92;
       context__.validate_dims("data initialization","jitter","double",
           context__.to_vec());
       jitter = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 85;
+      current_statement__ = 92;
       jitter = context__.vals_r("jitter")[(1 - 1)];
-      current_statement__ = 86;
+      current_statement__ = 93;
+      context__.validate_dims("data initialization","kernel_var_prior_mu",
+          "double",context__.to_vec());
+      kernel_var_prior_mu = std::numeric_limits<double>::quiet_NaN();
+      
+      current_statement__ = 93;
+      kernel_var_prior_mu = context__.vals_r("kernel_var_prior_mu")[(1 - 1)];
+      current_statement__ = 94;
+      context__.validate_dims("data initialization","kernel_var_prior_std",
+          "double",context__.to_vec());
+      kernel_var_prior_std = std::numeric_limits<double>::quiet_NaN();
+      
+      current_statement__ = 94;
+      kernel_var_prior_std = context__.vals_r("kernel_var_prior_std")[
+          (1 - 1)];
+      current_statement__ = 95;
+      context__.validate_dims("data initialization","kernel_length_prior_mu",
+          "double",context__.to_vec());
+      kernel_length_prior_mu = std::numeric_limits<double>::quiet_NaN();
+      
+      current_statement__ = 95;
+      kernel_length_prior_mu = context__.vals_r("kernel_length_prior_mu")[
+          (1 - 1)];
+      current_statement__ = 96;
+      context__.validate_dims("data initialization",
+          "kernel_length_prior_std","double",context__.to_vec());
+      kernel_length_prior_std = std::numeric_limits<double>::quiet_NaN();
+      
+      current_statement__ = 96;
+      kernel_length_prior_std = context__.vals_r("kernel_length_prior_std")[
+          (1 - 1)];
+      current_statement__ = 97;
       context__.validate_dims("data initialization","M","int",
           context__.to_vec());
       M = std::numeric_limits<int>::min();
       
-      current_statement__ = 86;
+      current_statement__ = 97;
       M = context__.vals_i("M")[(1 - 1)];
-      current_statement__ = 87;
+      current_statement__ = 98;
+      context__.validate_dims("data initialization","u_model_index","int",
+          context__.to_vec());
+      u_model_index = std::numeric_limits<int>::min();
+      
+      current_statement__ = 98;
+      u_model_index = context__.vals_i("u_model_index")[(1 - 1)];
+      current_statement__ = 98;
+      current_statement__ = 98;
+      check_greater_or_equal(function__, "u_model_index", u_model_index, 0);
+      current_statement__ = 98;
+      current_statement__ = 98;
+      check_less_or_equal(function__, "u_model_index", u_model_index, 1);
+      current_statement__ = 99;
       validate_non_negative_index("diag_jitter", "M", M);
-      current_statement__ = 88;
+      current_statement__ = 100;
       validate_non_negative_index("diag_jitter", "M", M);
-      current_statement__ = 89;
+      current_statement__ = 101;
       diag_jitter = Eigen::Matrix<double, -1, -1>(M, M);
       stan::math::fill(diag_jitter, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 90;
+      current_statement__ = 102;
       assign(diag_jitter, nil_index_list(),
         diag_matrix(rep_vector(jitter, M)), "assigning variable diag_jitter");
-      current_statement__ = 91;
+      current_statement__ = 103;
       validate_non_negative_index("X_array", "N", N);
-      current_statement__ = 92;
+      current_statement__ = 104;
       X_array = std::vector<double>(N, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 93;
+      current_statement__ = 105;
       assign(X_array, nil_index_list(), to_array_1d(X),
         "assigning variable X_array");
-      current_statement__ = 94;
+      current_statement__ = 106;
       validate_non_negative_index("eta", "M", M);
-      current_statement__ = 95;
+      current_statement__ = 107;
       validate_non_negative_index("Xm", "M", M);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -621,83 +682,102 @@ class sparse_gp_cpc_model final : public model_base_crtp<sparse_gp_cpc_model> {
         stan::math::fill(K_mp_factor, DUMMY_VAR__);
         
         current_statement__ = 43;
-        validate_non_negative_index("Xm_array", "M", M);
-        std::vector<local_scalar_t__> Xm_array;
-        Xm_array = std::vector<local_scalar_t__>(M, DUMMY_VAR__);
-        
+        lp_accum__.add(
+          normal_lpdf<propto__>(kernel_length, kernel_length_prior_mu,
+            kernel_length_prior_std));
+        current_statement__ = 44;
+        lp_accum__.add(
+          normal_lpdf<propto__>(kernel_var, kernel_var_prior_mu,
+            kernel_var_prior_std));
         current_statement__ = 45;
-        assign(Xm_array, nil_index_list(), to_array_1d(Xm),
-          "assigning variable Xm_array");
-        current_statement__ = 46;
-        lp_accum__.add(normal_lpdf<propto__>(kernel_length, 1, 10));
-        current_statement__ = 47;
-        lp_accum__.add(normal_lpdf<propto__>(kernel_var, 1, 10));
-        current_statement__ = 48;
         lp_accum__.add(std_normal_lpdf<propto__>(eta));
-        current_statement__ = 49;
+        current_statement__ = 46;
         lp_accum__.add(uniform_lpdf<propto__>(Xm, 0, 1));
-        current_statement__ = 50;
+        current_statement__ = 56;
+        if (logical_eq(u_model_index, 0)) {
+          current_statement__ = 53;
+          assign(Mm, nil_index_list(), Xm, "assigning variable Mm");
+          current_statement__ = 54;
+          assign(Mp, nil_index_list(), X, "assigning variable Mp");
+        } else {
+          current_statement__ = 52;
+          if (logical_eq(u_model_index, 1)) {
+            current_statement__ = 49;
+            assign(Mm, nil_index_list(), u_pow(Xm, theta, pstream__),
+              "assigning variable Mm");
+            current_statement__ = 50;
+            assign(Mp, nil_index_list(), u_pow(X, theta, pstream__),
+              "assigning variable Mp");
+          } else {
+            current_statement__ = 47;
+            std::stringstream errmsg_stream__;
+            errmsg_stream__ << "u_model_index incorrect";
+            errmsg_stream__ << u_model_index;
+            throw std::domain_error(errmsg_stream__.str());
+          }
+        }
+        current_statement__ = 57;
         assign(Mm, nil_index_list(), u_pow(Xm, theta, pstream__),
           "assigning variable Mm");
-        current_statement__ = 51;
+        current_statement__ = 58;
         assign(Mp, nil_index_list(), u_pow(X, theta, pstream__),
           "assigning variable Mp");
-        current_statement__ = 52;
+        current_statement__ = 59;
         assign(K_factor, nil_index_list(), multiply(Mm, transpose(Mm)),
           "assigning variable K_factor");
-        current_statement__ = 53;
+        current_statement__ = 60;
         assign(K_mp_factor, nil_index_list(), multiply(Mm, transpose(Mp)),
           "assigning variable K_mp_factor");
-        current_statement__ = 54;
+        current_statement__ = 61;
         assign(K, nil_index_list(),
           add(
             elt_multiply(K_factor,
               gp_exp_quad_cov(to_array_1d(Xm), kernel_var, kernel_length)),
             diag_jitter), "assigning variable K");
-        current_statement__ = 55;
+        current_statement__ = 62;
         assign(L, nil_index_list(), cholesky_decompose(K),
           "assigning variable L");
-        current_statement__ = 56;
+        current_statement__ = 63;
         assign(L_dot_eta, nil_index_list(), multiply(L, eta),
           "assigning variable L_dot_eta");
-        current_statement__ = 57;
+        current_statement__ = 64;
         assign(f, nil_index_list(), add(Mm, L_dot_eta),
           "assigning variable f");
-        current_statement__ = 58;
+        current_statement__ = 65;
         assign(K_mp, nil_index_list(),
           elt_multiply(K_mp_factor,
-            gp_exp_quad_cov(Xm_array, X_array, kernel_var, kernel_length)),
-          "assigning variable K_mp");
-        current_statement__ = 59;
+            gp_exp_quad_cov(to_array_1d(Xm), X_array, kernel_var,
+              kernel_length)), "assigning variable K_mp");
+        current_statement__ = 66;
         assign(A, nil_index_list(), mdivide_left_tri_low(L, K_mp),
           "assigning variable A");
-        current_statement__ = 60;
+        current_statement__ = 67;
         assign(v, nil_index_list(), mdivide_left_tri_low(L, L_dot_eta),
           "assigning variable v");
-        current_statement__ = 61;
+        current_statement__ = 68;
         assign(f_predict, nil_index_list(),
           add(Mp, multiply(transpose(A), v)), "assigning variable f_predict");
-        current_statement__ = 62;
+        current_statement__ = 69;
         assign(seu, nil_index_list(), elt_multiply(p, f_predict),
           "assigning variable seu");
-        current_statement__ = 63;
+        current_statement__ = 70;
         assign(seuA, nil_index_list(),
           add(
             rvalue(seu, cons_list(index_multi(belong_A0), nil_index_list()),
               "seu"),
             rvalue(seu, cons_list(index_multi(belong_A1), nil_index_list()),
               "seu")), "assigning variable seuA");
-        current_statement__ = 64;
+        current_statement__ = 71;
         assign(seuB, nil_index_list(),
           add(
             rvalue(seu, cons_list(index_multi(belong_B0), nil_index_list()),
               "seu"),
             rvalue(seu, cons_list(index_multi(belong_B1), nil_index_list()),
               "seu")), "assigning variable seuB");
-        current_statement__ = 65;
+        current_statement__ = 72;
         assign(diff_eu, nil_index_list(), subtract(seuB, seuA),
           "assigning variable diff_eu");
-        current_statement__ = 66;
+        current_statement__ = 73;
         lp_accum__.add(
           bernoulli_logit_lpmf<propto__>(y, multiply(tau, diff_eu)));
       }

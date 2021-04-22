@@ -17,8 +17,12 @@ data {
   real theta;
   real tau;
   real jitter;
+  real kernel_var_prior_mu;
+  real kernel_var_prior_std;
+  real kernel_length_prior_mu;
+  real kernel_length_prior_std;
   int M;
-  // int<lower=0, upper=1> u_model_index;
+  int<lower=0, upper=1> u_model_index;
 }
 transformed data {
   matrix[M, M] diag_jitter;
@@ -53,26 +57,22 @@ model {
   matrix[M, M] K_factor;
   matrix[M, N] K_mp_factor;
   
-  real Xm_array[M];
-  
-  Xm_array = to_array_1d(Xm);
-  
-  kernel_length ~ normal(1, 10);
-  kernel_var ~ normal(1, 10);
+  kernel_length ~ normal(kernel_length_prior_mu, kernel_length_prior_std);
+  kernel_var ~ normal(kernel_var_prior_mu, kernel_var_prior_std);
   eta ~ std_normal();
   Xm ~ uniform(0, 1);
   
-  // if (u_model_index == 0) {
-  //  Mm = Xm;
-  //  Mp = X;
-  // }
-  // else if (u_model_index == 1) {
-  //  Mm = u_pow(Xm, theta);
-  //  Mp = u_pow(X, theta);
-  //}
-  //else {
-  //  reject("u_model_index incorrect", u_model_index);
-  //}
+  if (u_model_index == 0) {
+      Mm = Xm;
+      Mp = X;
+  }
+  else if (u_model_index == 1) {
+      Mm = u_pow(Xm, theta);
+      Mp = u_pow(X, theta);
+  }
+  else {
+      reject("u_model_index incorrect", u_model_index);
+  }
   Mm = u_pow(Xm, theta);
   Mp = u_pow(X, theta);
   
@@ -85,7 +85,7 @@ model {
   L_dot_eta = L*eta;
   f = Mm + L_dot_eta;
 
-  K_mp = K_mp_factor .* gp_exp_quad_cov(Xm_array, X_array, kernel_var, kernel_length);
+  K_mp = K_mp_factor .* gp_exp_quad_cov(to_array_1d(Xm), X_array, kernel_var, kernel_length);
   A = mdivide_left_tri_low(L, K_mp);
   v = mdivide_left_tri_low(L, L_dot_eta);
 
