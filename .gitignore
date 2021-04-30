@@ -142,5 +142,6 @@ backup/
 from-ville
 
 # results & models
-*/results
-*/stan_models
+/*/results/
+
+/using-stan/stan_model/
