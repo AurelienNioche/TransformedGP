@@ -142,7 +142,8 @@ class DiscrepancyModel:
             observations).mean(0)
         return log_prob
 
-    def train(self, learning_rate=0.05, epochs=1000, seed=123):
+    def train(self, learning_rate=0.05, epochs=1000, seed=123,
+              progress_bar=True):
 
         torch.random.manual_seed(seed)
 
@@ -161,21 +162,26 @@ class DiscrepancyModel:
 
         self.hist_loss = []
 
-        with tqdm(total=epochs) as pbar:
-            for i in range(epochs):
-                # Zero backpropped gradients from previous iteration
-                optimizer.zero_grad()
-                # Get predictive output
-                output = self.r_model(self.train_x)
-                # Calc loss and backprop gradients
-                loss = -mll(output, self.train_y)
-                loss.backward()
-                optimizer.step()
+        pbar = tqdm(total=epochs, leave=False) if progress_bar else None
 
-                self.hist_loss.append(loss.item())
+        for i in range(epochs):
+            # Zero backpropped gradients from previous iteration
+            optimizer.zero_grad()
+            # Get predictive output
+            output = self.r_model(self.train_x)
+            # Calc loss and backprop gradients
+            loss = -mll(output, self.train_y)
+            loss.backward()
+            optimizer.step()
 
+            self.hist_loss.append(loss.item())
+
+            if pbar is not None:
                 pbar.set_postfix(loss=loss.item())
                 pbar.update()
+
+        if pbar is not None:
+            pbar.close()
 
         return self.hist_loss
 

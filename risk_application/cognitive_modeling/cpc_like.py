@@ -23,11 +23,10 @@ def fit_cpc_like(data, u=u_pow, w=None, seed=12345):
 
         def run(param):
 
-            tau = softplus(param[0])
-            theta_u = softplus(param[1])
+            tau, theta_u = param[:2]
 
             if w is not None:
-                theta_w = scipy.special.expit(param[2])
+                theta_w = param[2]
                 wpA = w(pA, theta_w)
                 wpB = w(pB, theta_w)
 
@@ -55,12 +54,18 @@ def fit_cpc_like(data, u=u_pow, w=None, seed=12345):
 
     np.random.seed(seed)
     if w is None:
-        opt = scipy.optimize.minimize(objective(data, u, w), x0=np.ones(2))
-        theta_w = None
+        opt = scipy.optimize.minimize(objective(data, u, w),
+                                      method='L-BFGS-B',
+                                      x0=np.ones(2),
+                                      bounds=((0, np.inf),   # tau
+                                              (0, np.inf)))  # theta_u
     else:
-        opt = scipy.optimize.minimize(objective(data, u, w), x0=np.ones(3))
-        theta_w = scipy.special.expit(opt.x[2])
+        opt = scipy.optimize.minimize(objective(data, u, w),
+                                      method='L-BFGS-B',
+                                      x0=np.ones(3),
+                                      bounds=((0, np.inf),  # tau
+                                              (0, np.inf),  # theta_u
+                                              (0, 1),       # theta_w
+                                              ))
 
-    tau = softplus(opt.x[0])
-    theta_u = softplus(opt.x[1])
-    return tau, theta_u, theta_w
+    return opt.x
