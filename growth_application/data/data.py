@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def get(n_per_group=100, seed=123):
+def get_data(n_per_group=100, seed=123):
 
     """
     Create data based on population statistics

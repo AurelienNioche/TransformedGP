@@ -1,26 +1,17 @@
 import torch
 import gpytorch
 from tqdm.autonotebook import tqdm
-
-
-class MeanFunc(gpytorch.means.mean.Mean):
-
-    def __init__(self, m, theta):
-        super().__init__()
-        self.m = m
-        self.theta = theta
-
-    def forward(self, x):
-        return self.m.forward(x.squeeze(-1), self.theta)
+import numpy as np
 
 
 class GP(gpytorch.models.ExactGP):
-
-    def __init__(self, train_x, train_y, likelihood, m, theta):
+    """
+    straight from the doc
+    """
+    def __init__(self, train_x, train_y, likelihood):
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = MeanFunc(m=m, theta=theta)
-        self.covar_module = gpytorch.kernels.ScaleKernel(
-            gpytorch.kernels.RBFKernel())
+        self.mean_module = gpytorch.means.ZeroMean()
+        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
@@ -28,10 +19,9 @@ class GP(gpytorch.models.ExactGP):
         return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
-class DiscrepancyModel:
+class GPRegression:
 
-    def __init__(self, data, m, theta,
-                 noise_init_value=50):
+    def __init__(self, data, noise_init_value):
 
         # extract data
         self.train_x = torch.from_numpy(data.age.values).double()
@@ -40,29 +30,20 @@ class DiscrepancyModel:
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood()
         self.likelihood.noise = noise_init_value
 
-        self.m = m
-        self.theta = theta
-
         self.gp = GP(train_x=self.train_x, train_y=self.train_y,
-                     likelihood=self.likelihood, m=self.m, theta=self.theta)
+                     likelihood=self.likelihood)
 
         self.hist_loss = []
 
-    def train(
-            self,
-            learning_rate=0.05, epochs=1000, seed=123,
-            progress_bar=True):
-
-        # seed
-        torch.manual_seed(seed)
+    def train(self, epochs=100, learning_rate=0.1):
 
         # Find optimal model hyperparameters
         self.gp.train()
         self.likelihood.train()
 
         # Use the adam optimizer
-        # Includes GaussianLikelihood parameters
-        optimizer = torch.optim.Adam(self.gp.parameters(), lr=learning_rate)
+        optimizer = torch.optim.Adam(self.gp.parameters(),
+                                     lr=learning_rate)
 
         # "Loss" for GPs - the marginal log likelihood
         mll = gpytorch.mlls.ExactMarginalLogLikelihood(self.likelihood,
@@ -70,33 +51,26 @@ class DiscrepancyModel:
 
         self.hist_loss = []
 
-        pbar = tqdm(total=epochs) if progress_bar else None
+        with tqdm(total=epochs) as pbar:
+            for i in range(epochs):
+                # Zero gradients from previous iteration
+                optimizer.zero_grad()
+                # Output from model
+                output = self.gp(self.train_x)
+                # Calc loss and backprop gradients
+                loss = -mll(output, self.train_y)
+                loss.backward()
 
-        for i in range(epochs):
-            # Zero gradients from previous iteration
-            optimizer.zero_grad()
+                optimizer.step()
 
-            # Output from model
-            output = self.gp(self.train_x)
-
-            # Calc loss and backprop gradients
-            loss = -mll(output, self.train_y)
-            loss.backward()
-            optimizer.step()
-
-            # Update progress bar
-            if pbar:
                 pbar.update()
                 pbar.set_postfix(loss=loss.item())
 
-            self.hist_loss.append(loss.item())
-
-        if pbar:
-            pbar.close()
+                self.hist_loss.append(loss.item())
 
         return self.hist_loss
 
-    def pred(self, test_x):
+    def predict(self, test_x):
 
         # Get into evaluation (predictive posterior) mode
         self.gp.eval()
@@ -114,5 +88,4 @@ class DiscrepancyModel:
             # Get mean
             gp_mean = observed_pred.mean.numpy()
 
-        m_pred = self.m.forward(test_x, self.theta).numpy()
-        return m_pred, gp_mean, gp_lower, gp_upper
+        return np.zeros(len(test_x)), gp_mean, gp_lower, gp_upper

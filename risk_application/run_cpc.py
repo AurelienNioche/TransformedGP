@@ -100,7 +100,6 @@ def main():
 
     # Saving
     df_dm = pd.DataFrame(result_list)
-    # df_dm.dm = df_dm.dm.apply(lambda x: dill.dumps(x))
     path = "bkp/dm_cpc.pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)

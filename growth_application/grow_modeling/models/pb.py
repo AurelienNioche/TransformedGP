@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import safe_exp
+from . utils import safe_exp
 
 
 class Pb:
@@ -13,12 +13,12 @@ class Pb:
 
     """
 
-    bounds = [(0, np.inf) for _ in range(7)]
+    x0 = np.zeros(5)
 
     @staticmethod
     def forward(t, param):
 
-        h1, h_star, t_star, s0, s1 = param
+        h1, h_star, t_star, s0, s1 = np.log(1+safe_exp(param))
 
         delta_t = t - t_star
         pred = h1 - 2 * (h1 - h_star) / (
