@@ -103,7 +103,8 @@ def run_single_user(
                      x_max=1e5 * 4,
                      presentations=[2e5 * i for i in range(1, 3)],
                      title=f"User {u}", ax=axes[1])
-        plt.show()
+        os.makedirs("fig", exist_ok=True)
+        plt.savefig(f"fig/user_{u}.pdf")
 
         return {
             "user": u,
@@ -123,8 +124,8 @@ def run_human(ignore_warnings=True):
     data = get_data("data/data_character_meaning.csv")
 
     settings = dict(
-        learning_rate=0.1,
-        epochs=int(2e4) ,
+        learning_rate=0.01,
+        epochs=int(2e4),
         n_samples=100,
         n_inducing_points=100,
         learn_inducing_locations=False,
