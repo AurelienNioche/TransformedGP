@@ -7,9 +7,10 @@ def generate_data_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
 
     np.random.seed(seed)
 
-    data = pd.DataFrame(np.zeros((n * 10, 8)),
-                        columns=[f"p{i}" for i in range(4)] + [f"x{i}" for i in
-                                                               range(4)])
+    data = pd.DataFrame(
+        np.zeros((n * 10, 8)),
+        columns=[f"p{i}" for i in range(4)] + [f"x{i}" for i in
+                                               range(4)])
 
     j = 0
     for opt in range(2):

@@ -21,7 +21,9 @@ def main():
     n_samples = 100
     learn_inducing_locations = False
     n_inducing_points = 50
-    epochs = 300
+    epochs = 1000  # 300
+    learning_rate = 0.01  # 0.05
+    use_mean_correction = True
 
     data = generate_data_cpc_like(
         u=u_truth,
@@ -45,9 +47,10 @@ def main():
                 h=h,
                 n_samples=n_samples,
                 learn_inducing_locations=learn_inducing_locations,
-                n_inducing_points=n_inducing_points)
+                n_inducing_points=n_inducing_points,
+                use_mean_correction=use_mean_correction)
 
-            dm.train(epochs=epochs)
+            dm.train(epochs=epochs, learning_rate=learning_rate)
 
             discrepancy_models[(u.__name__, h)] = dm
 
@@ -60,3 +63,8 @@ def main():
     df_dm.to_pickle(path)
 
     print(f"Results saved as: {path}")
+
+
+if __name__ == "__main__":
+    main()
+

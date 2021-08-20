@@ -55,7 +55,8 @@ class DiscrepancyModel:
             jitter: Union[int, float] = 1e-07,
             n_samples: int = 40,
             n_inducing_points: int = 50,
-            cholesky_max_tries: int = 1000):
+            cholesky_max_tries: int = 1000,
+            use_mean_correction: bool = True):
 
         if h == "sigmoid" or h == torch.sigmoid:
             h = torch.sigmoid
@@ -113,22 +114,57 @@ class DiscrepancyModel:
 
         self.cholesky_max_tries = cholesky_max_tries
 
+        self.use_mean_correction = use_mean_correction
+
         self.hist_loss = None
+
+    def compute_corrected_mean(self, h_inv_m, r):
+        mean_x = h_inv_m + r
+
+        if not self.use_mean_correction or self.h == identity:
+            return mean_x
+
+        elif self.h == torch.exp:
+            mean_x -= 0.5 * torch.ones_like(mean_x) * self.r_model.covar_module.outputscale
+            return mean_x
+
+        elif self.h == torch.sigmoid:
+            mean_x = \
+                torch.distributions.Normal(0.0, 1.0).icdf(torch.sigmoid(mean_x)) \
+                * torch.sqrt(self.r_model.covar_module.outputscale + 0.588 ** (-2))
+            return mean_x
+        else:
+            raise ValueError
 
     def expected_log_prob(
             self, 
             observations: torch.Tensor, 
             function_dist: gpytorch.distributions.MultivariateNormal):
 
+        # gp_mean = function_dist.loc
+        # eta = torch.randn(self.n_x, self.n_samples)
+        # L_eta = L @ eta
+        # r = gp_mean + L_eta.T
+        #
+        # corrected_mean = self.compute_corrected_mean(
+        #     h_inv_m=self.h_inv_m, r=r)
+        #
+        # f = self.h(corrected_mean)
+
+        r = function_dist.loc
+
+        corrected_mean = self.compute_corrected_mean(
+            h_inv_m=self.h_inv_m, r=r)
+
+
         L = psd_safe_cholesky(function_dist.covariance_matrix,
                               max_tries=self.cholesky_max_tries)
-
-        gp_mean = function_dist.loc
         eta = torch.randn(self.n_x, self.n_samples)
         L_eta = L @ eta
-        r = gp_mean + L_eta.T
 
-        f = self.h(self.h_inv_m + r)
+        gp_mean = corrected_mean + L_eta.T
+
+        f = self.h(gp_mean)
 
         est_eu_sorted = self.train_p * f
         est_eu = est_eu_sorted[:, self.init_order]
@@ -196,6 +232,8 @@ class DiscrepancyModel:
 
         h_inv_m = self.h_inv(m_pred)
 
-        f_pred = self.h(h_inv_m + r_pred)
+        corrected_mean = self.compute_corrected_mean(
+            h_inv_m=h_inv_m, r=r_pred)
+        f_pred = self.h(corrected_mean)
 
         return m_pred, f_pred

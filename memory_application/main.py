@@ -12,15 +12,13 @@ from model.memory import m, fit_data
 from plot.plot import plot_losses, plot_results
 from data.get_data import get_data
 
-
-
 def run_artificial(
         theta = (0.05, 0.2),
         n_samples = 100,
         learn_inducing_locations = False,
         n_inducing_points = 100,
         epochs = 500,
-        learning_rate = 0.1,
+        learning_rate = 0.001,
         seed=123):
 
     # Create artificial data
@@ -64,9 +62,7 @@ def run_apply_async_multiprocessing(
     for job in jobs:
         result_list_tqdm.append(job.get())
         pbar.update()
-
     pbar.close()
-
     return result_list_tqdm
 
 
@@ -124,7 +120,7 @@ def run_human(ignore_warnings=True):
     data = get_data("data/data_character_meaning.csv")
 
     settings = dict(
-        learning_rate=0.01,
+        learning_rate=0.001,
         epochs=int(2e4),
         n_samples=100,
         n_inducing_points=100,

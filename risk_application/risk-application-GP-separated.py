@@ -43,16 +43,16 @@ data
 
 
 model = DiscrepancyModel(
-    data=data, u=u_model, theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
-    learn_inducing_locations=False, n_inducing_points=50)
+data=data, u=u_model, theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
+learn_inducing_locations=False, n_inducing_points=50)
 
 
 # In[44]:
 
 
 hist_loss = model.train(
-    epochs=1000,
-    learning_rate=0.1)
+epochs=1000,
+learning_rate=0.1)
 
 
 # In[46]:
@@ -73,7 +73,7 @@ f_preds = model.pred(test_x)
 
 fig, ax = plt.subplots()
 for i in range(10):
-    ax.plot(test_x, f_preds[i])
+ax.plot(test_x, f_preds[i])
 
 
 # In[49]:
@@ -90,18 +90,18 @@ ax.plot(test_x, u_model(test_x, theta));
 
 
 model = DiscrepancyModel(
-    data=data, 
-    u=u_lin,  # Here is the change!
-    theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
-    learn_inducing_locations=False, n_inducing_points=50)
+data=data, 
+u=u_lin,  # Here is the change!
+theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
+learn_inducing_locations=False, n_inducing_points=50)
 
 
 # In[51]:
 
 
 hist_loss = model.train(
-    epochs=1000,
-    learning_rate=0.1)
+epochs=1000,
+learning_rate=0.1)
 
 
 # In[53]:
@@ -135,50 +135,50 @@ ax.plot(test_x, u_lin(test_x, None), ls=':', color='C2');
 
 def generate_data_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
 
-    np.random.seed(seed)
+np.random.seed(seed)
 
-    data = pd.DataFrame(np.zeros((n*10, 8)),
-                        columns=[f"p{i}" for i in range(4)] + [f"x{i}" for i in range(4)])
+data = pd.DataFrame(np.zeros((n*10, 8)),
+columns=[f"p{i}" for i in range(4)] + [f"x{i}" for i in range(4)])
 
-    j = 0
-    for opt in range(2):
-        p = np.random.random(size=n*10)
+j = 0
+for opt in range(2):
+p = np.random.random(size=n*10)
 
-        data[f'p{j}'] = p
-        data[f'p{j+1}'] = 1 - p
+data[f'p{j}'] = p
+data[f'p{j+1}'] = 1 - p
 
-        a = np.random.random(size=(n*10, 2))
-        a = np.sort(-a, -1)*(-1)
+a = np.random.random(size=(n*10, 2))
+a = np.sort(-a, -1)*(-1)
 
-        data[f'x{j}'] = a[:, 0]
-        data[f'x{j+1}'] = a[:, 1]
+data[f'x{j}'] = a[:, 0]
+data[f'x{j+1}'] = a[:, 1]
 
-        j += 2
+j += 2
 
-    data = data[~((data.p0 >= data.p2) & (data.x0 >= data.x2))]
-    data = data[~((data.p2 >= data.p0) & (data.x2 >= data.x0))]
-    data = data.sample(n=n, replace=False)
+data = data[~((data.p0 >= data.p2) & (data.x0 >= data.x2))]
+data = data[~((data.p2 >= data.p0) & (data.x2 >= data.x0))]
+data = data.sample(n=n, replace=False)
 
-    pA = data.p0.values
-    pB = data.p2.values
+pA = data.p0.values
+pB = data.p2.values
 
-    xA0 = data.x0.values
-    xA1 = data.x1.values
+xA0 = data.x0.values
+xA1 = data.x1.values
 
-    xB0 = data.x2.values
-    xB1 = data.x3.values
+xB0 = data.x2.values
+xB1 = data.x3.values
 
-    seuA = pA * u(xA0, theta) + (1-pA) * u(xA1, theta)
-    seuB = pB * u(xB0, theta) + (1-pB) * u(xB1, theta)
+seuA = pA * u(xA0, theta) + (1-pA) * u(xA1, theta)
+seuB = pB * u(xB0, theta) + (1-pB) * u(xB1, theta)
 
-    diff_eu = seuB - seuA
+diff_eu = seuB - seuA
 
-    p_chooseB = scipy.special.expit(tau * diff_eu)
-    choices = np.zeros(n, dtype=int)
-    choices[:] = p_chooseB > np.random.random(size=n)
-    data['choices'] = choices
+p_chooseB = scipy.special.expit(tau * diff_eu)
+choices = np.zeros(n, dtype=int)
+choices[:] = p_chooseB > np.random.random(size=n)
+data['choices'] = choices
 
-    return data
+return data
 
 
 # ## Fit the data with 'expert' model
@@ -220,18 +220,18 @@ print("tau", tau_opt, "theta_u", theta_opt)
 
 
 model = DiscrepancyModel(
-    data=data, 
-    u=u_model, 
-    theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
-    learn_inducing_locations=False, n_inducing_points=50)
+data=data, 
+u=u_model, 
+theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
+learn_inducing_locations=False, n_inducing_points=50)
 
 
 # In[58]:
 
 
 hist_loss = model.train(
-    epochs=1000,
-    learning_rate=0.1)
+epochs=1000,
+learning_rate=0.1)
 
 
 # In[59]:
@@ -261,18 +261,18 @@ ax.plot(test_x, u_model(test_x, theta));
 
 
 model = DiscrepancyModel(
-    data=data, 
-    u=u_lin,  # Here is the change!
-    theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
-    learn_inducing_locations=False, n_inducing_points=50)
+data=data, 
+u=u_lin,  # Here is the change!
+theta=theta, tau=tau,  h=torch.sigmoid, n_samples=100,
+learn_inducing_locations=False, n_inducing_points=50)
 
 
 # In[63]:
 
 
 hist_loss = model.train(
-    epochs=1000,
-    learning_rate=0.1)
+epochs=1000,
+learning_rate=0.1)
 
 
 # In[64]:
@@ -309,27 +309,27 @@ df = pd.read_csv("../data/cpc2018.csv")
 
 
 data = df[(df.LotNumB == 1) & (df.LotNumA == 1) & (df.Amb == 0) 
-          & (df.Ha >= 0) & (df.Hb >= 0) & (df.La >= 0) & (df.Lb >= 0)]  # & (df.La ==0)  & (df.Lb == 0)
+  & (df.Ha >= 0) & (df.Hb >= 0) & (df.La >= 0) & (df.Lb >= 0)]  # & (df.La ==0)  & (df.Lb == 0)
 
 
 # In[69]:
 
 
 data = pd.DataFrame({
-    "subject": data.SubjID,
-    "p0": data.pHa.values,
-    "x0": data.Ha.values,
-    "p1": 1 - data.pHa.values,
-    "x1": data.La.values,
-    "p2": data.pHb.values,
-    "x2": data.Hb.values,
-    "p3": 1 - data.pHb.values,
-    "x3": data.Lb.values,
-    "choices": data.B.values
+"subject": data.SubjID,
+"p0": data.pHa.values,
+"x0": data.Ha.values,
+"p1": 1 - data.pHa.values,
+"x1": data.La.values,
+"p2": data.pHb.values,
+"x2": data.Hb.values,
+"p3": 1 - data.pHb.values,
+"x3": data.Lb.values,
+"choices": data.B.values
 })
 max_x = np.max(np.concatenate([data[f'x{i}'] for i in range(4)]))
 for i in range(4):
-    data[f'x{i}'] = data[f'x{i}'] / max_x
+data[f'x{i}'] = data[f'x{i}'] / max_x
 
 
 # In[70]:
@@ -384,19 +384,19 @@ plt.plot(x, y);
 u = u_model
 
 model = DiscrepancyModel(
-    data=d, 
-    u=u,
-    theta=theta, 
-    tau=tau,  
-    h=torch.sigmoid, 
-    n_samples=100,
-    learn_inducing_locations=False, 
-    n_inducing_points=50, 
-    jitter=1e-07)
+data=d, 
+u=u,
+theta=theta, 
+tau=tau,  
+h=torch.sigmoid, 
+n_samples=100,
+learn_inducing_locations=False, 
+n_inducing_points=50, 
+jitter=1e-07)
 
 hist_loss = model.train(
-    epochs=1000,
-    learning_rate=0.1)
+epochs=1000,
+learning_rate=0.1)
 
 
 # In[79]:
@@ -424,19 +424,19 @@ ax.plot(test_x, u_model(test_x, theta_opt));
 u = u_lin
 
 model = DiscrepancyModel(
-    data=d, 
-    u=u,
-    theta=theta, 
-    tau=tau,  
-    h=torch.sigmoid, 
-    n_samples=100,
-    learn_inducing_locations=False, 
-    n_inducing_points=50, 
-    jitter=1e-07)
+data=d, 
+u=u,
+theta=theta, 
+tau=tau,  
+h=torch.sigmoid, 
+n_samples=100,
+learn_inducing_locations=False, 
+n_inducing_points=50, 
+jitter=1e-07)
 
 hist_loss = model.train(
-    epochs=1000,
-    learning_rate=0.1)
+epochs=1000,
+learning_rate=0.1)
 
 
 # In[85]:
@@ -469,25 +469,25 @@ counts = data.subject.value_counts()
 subject_325 =  counts[counts == 325].index
 
 for s in tqdm(subject_325):
-    
-    try:
-    
-        d = data[data.subject == s]
 
-        opt_param = optimize(d, u=u_model, w=None)
+try:
 
-        tau = opt_param[0]
-        theta = opt_param[1]
-        print(f"Subject {s} tau={tau} theta={theta}")
+d = data[data.subject == s]
 
-        u = u_model
+opt_param = optimize(d, u=u_model, w=None)
 
-        model = DiscrepancyModel(
-            data=d, 
-            u=u,
-            theta=theta, 
-            tau=tau,  
-            h=torch.sigmoid, 
+tau = opt_param[0]
+theta = opt_param[1]
+print(f"Subject {s} tau={tau} theta={theta}")
+
+u = u_model
+
+model = DiscrepancyModel(
+data=d, 
+u=u,
+theta=theta, 
+tau=tau,  
+    h=torch.sigmoid, 
             n_samples=100,
             learn_inducing_locations=False, 
             n_inducing_points=50, 
