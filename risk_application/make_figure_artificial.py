@@ -171,7 +171,7 @@ def create_loss_fig(df_dm, h_set, u_set):
 def main():
     sns.set_context("paper")
 
-    use_mean_correction = False
+    use_mean_correction = True
 
     u_truth = u_pow
     theta_truth = 0.5

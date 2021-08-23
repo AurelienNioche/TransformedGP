@@ -25,9 +25,9 @@ def main():
     n_samples = 100
     learn_inducing_locations = False
     n_inducing_points = 50
-    epochs = 300  # 1000
-    learning_rate = 0.05  # 0.01
-    use_mean_correction = True  # True # False
+    epochs = 300
+    learning_rate = 0.05
+    use_mean_correction = True
 
     data = generate_data_cpc_like(
         u=u_truth,

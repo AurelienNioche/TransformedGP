@@ -120,7 +120,6 @@ class DiscrepancyModel:
         mean_x = h_inv_m + r
 
         if not self.use_mean_correction or self.h == identity:
-            print("not using correction")
             return mean_x
 
         elif self.h == torch.exp:
