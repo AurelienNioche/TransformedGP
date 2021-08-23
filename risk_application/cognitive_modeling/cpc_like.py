@@ -4,7 +4,6 @@ import scipy.optimize
 
 
 from . models.utility_models import u_pow
-from . utils import softplus
 
 
 def fit_cpc_like(data, u=u_pow, w=None, seed=12345):

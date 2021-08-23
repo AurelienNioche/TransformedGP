@@ -101,10 +101,12 @@ class DiscrepancyModel:
 
         self.n_samples = n_samples
 
+        self.jitter = jitter
+        self.cholesky_max_tries = cholesky_max_tries
+        self.use_mean_correction = use_mean_correction
+
         self.n_x = self.train_x.size(0)
         self.n_y = self.train_y.size(0)
-
-        self.jitter = jitter
 
         self.h_inv_m = self.h_inv(u(self.train_x, self.theta))
 
@@ -112,16 +114,13 @@ class DiscrepancyModel:
             inducing_points=torch.linspace(0, 1, n_inducing_points),
             learn_inducing_locations=learn_inducing_locations)
 
-        self.cholesky_max_tries = cholesky_max_tries
-
-        self.use_mean_correction = use_mean_correction
-
         self.hist_loss = None
 
     def compute_corrected_mean(self, h_inv_m, r):
         mean_x = h_inv_m + r
 
         if not self.use_mean_correction or self.h == identity:
+            print("not using correction")
             return mean_x
 
         elif self.h == torch.exp:
@@ -141,30 +140,19 @@ class DiscrepancyModel:
             observations: torch.Tensor, 
             function_dist: gpytorch.distributions.MultivariateNormal):
 
-        # gp_mean = function_dist.loc
-        # eta = torch.randn(self.n_x, self.n_samples)
-        # L_eta = L @ eta
-        # r = gp_mean + L_eta.T
-        #
-        # corrected_mean = self.compute_corrected_mean(
-        #     h_inv_m=self.h_inv_m, r=r)
-        #
-        # f = self.h(corrected_mean)
-
-        r = function_dist.loc
-
-        corrected_mean = self.compute_corrected_mean(
-            h_inv_m=self.h_inv_m, r=r)
-
-
+        gp_mean = function_dist.loc
         L = psd_safe_cholesky(function_dist.covariance_matrix,
                               max_tries=self.cholesky_max_tries)
         eta = torch.randn(self.n_x, self.n_samples)
         L_eta = L @ eta
+        r = gp_mean + L_eta.T
 
-        gp_mean = corrected_mean + L_eta.T
+        if self.use_mean_correction:
+            mean = self.h_inv_m + r
+        else:
+            mean = self.compute_corrected_mean(h_inv_m=self.h_inv_m, r=r)
 
-        f = self.h(gp_mean)
+        f = self.h(mean)
 
         est_eu_sorted = self.train_p * f
         est_eu = est_eu_sorted[:, self.init_order]
@@ -181,6 +169,7 @@ class DiscrepancyModel:
     def train(self, learning_rate=0.05, epochs=1000, seed=123,
               progress_bar=True):
 
+        # Seed torch
         torch.random.manual_seed(seed)
 
         # Switch to 'train' mode
@@ -189,7 +178,6 @@ class DiscrepancyModel:
         # Use the adam optimizer
         optimizer = torch.optim.Adam(self.r_model.parameters(),
                                      lr=learning_rate)
-
         # Loss function
         mll = gpytorch.mlls.VariationalELBO(
             likelihood=self,  # Will call the 'expected_log_prob' method
@@ -230,10 +218,13 @@ class DiscrepancyModel:
 
         m_pred = self.u(test_x, self.theta)
 
-        h_inv_m = self.h_inv(m_pred)
+        h_inv_m_pred = self.h_inv(m_pred)
 
-        corrected_mean = self.compute_corrected_mean(
-            h_inv_m=h_inv_m, r=r_pred)
-        f_pred = self.h(corrected_mean)
+        if self.use_mean_correction:
+            mean = h_inv_m_pred + r_pred
+        else:
+            mean = self.compute_corrected_mean(h_inv_m=h_inv_m_pred, r=r_pred)
+
+        f_pred = self.h(mean)
 
         return m_pred, f_pred

@@ -20,7 +20,7 @@ def generate_data_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
         data[f'p{j + 1}'] = 1 - p
 
         a = np.random.random(size=(n * 10, 2))
-        a = np.sort(-a, -1) * (-1)
+        a = np.sort(a=-a, axis=-1) * (-1)
 
         data[f'x{j}'] = a[:, 0]
         data[f'x{j + 1}'] = a[:, 1]
