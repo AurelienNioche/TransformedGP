@@ -8,11 +8,11 @@ from cognitive_modeling.cpc_like import fit_cpc_like
 from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 
 
-def main():
+def main(seed=12345):
 
-    seed_generate = 12345
-    seed_cog_fit = 12345
-    seed_dm_train = 12345
+    seed_generate = seed
+    seed_cog_fit = seed
+    seed_dm_train = seed
 
     u_truth = u_pow
     w_truth = None  # Don't model probability distortion
@@ -68,6 +68,7 @@ def main():
     path = f"bkp/" \
            f"dm_artificial" \
            f"{'_mean_corrected' if use_mean_correction else ''}" \
+           f"_seed={seed}" \
            f".pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
@@ -76,5 +77,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-
+    for seed in (1, 12, 123, 12345, 123456, 1234567):
+        main(seed=seed)

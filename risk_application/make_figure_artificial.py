@@ -1,4 +1,3 @@
-
 import os
 import torch
 import numpy as np
@@ -9,12 +8,9 @@ import dill
 import string
 
 from cognitive_modeling.models.utility_models import u_pow, u_lin
-from simulation.cpc_like import generate_data_cpc_like
-from cognitive_modeling.cpc_like import fit_cpc_like
-from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 
 
-def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth):
+def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, seed):
     nrows = len(h_set)
     ncols = len(u_set)*2
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(17, 10))
@@ -138,10 +134,10 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth):
     fig.tight_layout()
 
     os.makedirs("fig", exist_ok=True)
-    plt.savefig("fig/risk_artificial.pdf", bbox_inches='tight')
+    plt.savefig(f"fig/risk_artificial_seed={seed}.pdf", bbox_inches='tight')
 
 
-def create_loss_fig(df_dm, h_set, u_set):
+def create_loss_fig(df_dm, h_set, u_set, seed):
     nrows = len(h_set)
     ncols = len(u_set)
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(14, 10))
@@ -165,13 +161,12 @@ def create_loss_fig(df_dm, h_set, u_set):
 
     fig.tight_layout()
     os.makedirs("fig", exist_ok=True)
-    plt.savefig("fig/risk_artificial_loss.pdf", bbox_inches='tight')
+    plt.savefig(f"fig/risk_artificial_loss_seed={seed}.pdf",
+                bbox_inches='tight')
 
 
-def main():
+def main(seed, use_mean_correction):
     sns.set_context("paper")
-
-    use_mean_correction = True
 
     u_truth = u_pow
     theta_truth = 0.5
@@ -179,15 +174,17 @@ def main():
     u_set = u_pow, u_lin
 
     # Loading
-    df_dm = pd.read_pickle(
-        f"bkp/dm_artificial{'_mean_corrected' if use_mean_correction else ''}.pkl")
+    bkp_file = f"bkp/dm_artificial{'_mean_corrected' if use_mean_correction else ''}_seed={seed}.pkl"
+    print(f"Loading from {bkp_file}...")
+    df_dm = pd.read_pickle(bkp_file)
     df_dm.dm = df_dm.dm.apply(lambda x: dill.loads(x))
 
     create_main_fig(df_dm=df_dm, h_set=h_set, u_set=u_set,
-                    u_truth=u_truth, theta_truth=theta_truth)
+                    u_truth=u_truth, theta_truth=theta_truth, seed=seed)
 
-    create_loss_fig(df_dm=df_dm, h_set=h_set, u_set=u_set)
+    create_loss_fig(df_dm=df_dm, h_set=h_set, u_set=u_set, seed=seed)
 
 
 if __name__ == "__main__":
-    main()
+    for seed in (1, 12, 123, 12345, 123456, 1234567):
+        main(seed=seed, use_mean_correction=True)
