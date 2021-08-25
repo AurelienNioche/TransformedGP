@@ -42,6 +42,11 @@ def safe_log(x): return torch.log(x + 1e-07)
 def identity(x): return x
 
 
+def sigmoid_second_derivative(x):
+    e_x = torch.exp(x)
+    return - ((e_x - 1)* e_x) / (e_x + 1)**3
+
+
 class DiscrepancyModel:
 
     def __init__(
@@ -56,17 +61,20 @@ class DiscrepancyModel:
             n_samples: int = 40,
             n_inducing_points: int = 50,
             cholesky_max_tries: int = 1000,
-            use_mean_correction: bool = True):
+            mean_correction: int = 0):
 
         if h == "sigmoid" or h == torch.sigmoid:
             h = torch.sigmoid
             h_inv = torch.logit
+            h_second = sigmoid_second_derivative
         elif h == "exp" or h == torch.exp:
             h = torch.exp
             h_inv = safe_log
+            h_second = torch.exp
         elif h == "identity":
             h = identity
             h_inv = identity
+            h_second = lambda x: 0
         else:
             raise ValueError
 
@@ -98,12 +106,13 @@ class DiscrepancyModel:
 
         self.h = h
         self.h_inv = h_inv
+        self.h_second = h_second
 
         self.n_samples = n_samples
 
         self.jitter = jitter
         self.cholesky_max_tries = cholesky_max_tries
-        self.use_mean_correction = use_mean_correction
+        self.mean_correction = mean_correction
 
         self.n_x = self.train_x.size(0)
         self.n_y = self.train_y.size(0)
@@ -116,42 +125,90 @@ class DiscrepancyModel:
 
         self.hist_loss = None
 
-    def compute_corrected_mean(self, h_inv_m, r):
-        mean_x = h_inv_m + r
+    def compute_L_eta_T(self, n_samples, covar):
+        L = psd_safe_cholesky(
+            covar,
+            max_tries=self.cholesky_max_tries)
+        eta = torch.randn(covar.shape[0], n_samples)
+        L_eta = L @ eta
+        return L_eta.T
 
-        if not self.use_mean_correction or self.h == identity:
-            return mean_x
+    def compute_f_no_cor(self, h_inv_m, r_mean, r_covar, n_samples):
+
+        mean = h_inv_m + r_mean
+        L_eta_T = self.compute_L_eta_T(covar=r_covar,
+                                       n_samples=n_samples)
+        return self.h(mean + L_eta_T)
+
+    def compute_f_cor_mean_specific(self,
+                                     h_inv_m,
+                                     r_mean, r_covar, n_samples):
+
+        mean = h_inv_m + r_mean
+
+        if self.h == identity:
+            pass
 
         elif self.h == torch.exp:
-            mean_x -= 0.5 * torch.ones_like(mean_x) * self.r_model.covar_module.outputscale
-            return mean_x
+            mean -= 0.5 * torch.ones_like(mean) * self.r_model.covar_module.outputscale
 
         elif self.h == torch.sigmoid:
-            mean_x = \
-                torch.distributions.Normal(0.0, 1.0).icdf(torch.sigmoid(mean_x)) \
-                * torch.sqrt(self.r_model.covar_module.outputscale + 0.588 ** (-2))
-            return mean_x
+            output_scale = self.r_model.covar_module.outputscale
+            sig_mean = torch.sigmoid(mean)
+            mean = \
+                torch.distributions.Normal(0.0, 1.0).icdf(sig_mean) \
+                * torch.sqrt(output_scale + 0.588 ** (-2))
         else:
             raise ValueError
+
+        L_eta_T = self.compute_L_eta_T(covar=r_covar,
+                                       n_samples=n_samples)
+        return self.h(mean + L_eta_T)
+
+    def compute_f_cor_mean_taylor(self,
+                                      h_inv_m,
+                                      r_mean, r_covar, n_samples):
+
+        output_scale = self.r_model.covar_module.outputscale
+
+        L_eta_T = self.compute_L_eta_T(covar=r_covar,
+                                       n_samples=n_samples)
+
+        r = r_mean + L_eta_T
+        return self.h(h_inv_m + r) \
+            - 0.5 * self.h_second(h_inv_m) * output_scale
+
+    def compute_f(self, h_inv_m, r_mean, r_covar, n_samples):
+
+        kwargs = dict(
+            h_inv_m=h_inv_m,
+            r_mean=r_mean,
+            r_covar=r_covar,
+            n_samples=n_samples)
+
+        if self.mean_correction == 0:
+            f = self.compute_f_no_cor(**kwargs)
+        elif self.mean_correction == 1:
+            f = self.compute_f_cor_mean_specific(**kwargs)
+        elif self.mean_correction == 2:
+            f = self.compute_f_cor_mean_taylor(**kwargs)
+        else:
+            raise ValueError
+
+        return f
 
     def expected_log_prob(
             self, 
             observations: torch.Tensor, 
             function_dist: gpytorch.distributions.MultivariateNormal):
 
-        gp_mean = function_dist.loc
-        L = psd_safe_cholesky(function_dist.covariance_matrix,
-                              max_tries=self.cholesky_max_tries)
-        eta = torch.randn(self.n_x, self.n_samples)
-        L_eta = L @ eta
-        r = gp_mean + L_eta.T
+        r_mean = function_dist.loc
+        r_covar = function_dist.covariance_matrix
 
-        if self.use_mean_correction:
-            mean = self.h_inv_m + r
-        else:
-            mean = self.compute_corrected_mean(h_inv_m=self.h_inv_m, r=r)
-
-        f = self.h(mean)
+        f = self.compute_f(h_inv_m=self.h_inv_m,
+                           r_mean=r_mean,
+                           r_covar=r_covar,
+                           n_samples=self.n_samples)
 
         est_eu_sorted = self.train_p * f
         est_eu = est_eu_sorted[:, self.init_order]
@@ -213,17 +270,15 @@ class DiscrepancyModel:
         # Switch to 'eval' mode
         self.r_model.eval()
 
-        r_pred = self.r_model(test_x).sample(torch.Size((n_sample,)))
-
+        r_dist = self.r_model(test_x)  # .sample(torch.Size((n_sample,)))
+        r_mean_pred = r_dist.loc_
+        r_covar_pred = r_dist.covariance_matrix
         m_pred = self.u(test_x, self.theta)
-
         h_inv_m_pred = self.h_inv(m_pred)
 
-        if self.use_mean_correction:
-            mean = h_inv_m_pred + r_pred
-        else:
-            mean = self.compute_corrected_mean(h_inv_m=h_inv_m_pred, r=r_pred)
-
-        f_pred = self.h(mean)
+        f_pred = self.compute_f(h_inv_m=h_inv_m_pred,
+                                r_mean=r_mean_pred,
+                                r_covar=r_covar_pred,
+                                n_samples=n_sample)
 
         return m_pred, f_pred

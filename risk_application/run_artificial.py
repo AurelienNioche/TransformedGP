@@ -8,7 +8,7 @@ from cognitive_modeling.cpc_like import fit_cpc_like
 from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 
 
-def main(seed=12345):
+def run(mean_correction=0, seed=12345):
 
     seed_generate = seed
     seed_cog_fit = seed
@@ -22,12 +22,12 @@ def main(seed=12345):
     u_set = u_pow, u_lin
 
     n = 350
-    n_samples = 1000
+    n_samples = 100
     learn_inducing_locations = False
     n_inducing_points = 50
     epochs = 300
     learning_rate = 0.05
-    use_mean_correction = True
+    mean_correction = mean_correction
 
     data = generate_data_cpc_like(
         u=u_truth,
@@ -54,7 +54,7 @@ def main(seed=12345):
                 n_samples=n_samples,
                 learn_inducing_locations=learn_inducing_locations,
                 n_inducing_points=n_inducing_points,
-                use_mean_correction=use_mean_correction)
+                mean_correction=mean_correction)
 
             dm.train(epochs=epochs, learning_rate=learning_rate,
                      seed=seed_dm_train)
@@ -67,9 +67,8 @@ def main(seed=12345):
     df_dm.dm = df_dm.dm.apply(lambda x: dill.dumps(x))
     path = f"bkp/" \
            f"dm_artificial" \
-           f"{'_mean_corrected' if use_mean_correction else ''}" \
+           f"mean_cor={mean_correction}"\
            f"_seed={seed}" \
-           f"_n_samples={n_samples}" \
            f".pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
@@ -77,6 +76,12 @@ def main(seed=12345):
     print(f"Results saved as: {path}")
 
 
-if __name__ == "__main__":
+def main():
+
     for seed in (1, 12, 123, 12345, 123456, 1234567):
-        main(seed=seed)
+        for mean_correction in (0, 1, 2):
+            run(seed=seed, mean_correction=mean_correction)
+
+
+if __name__ == "__main__":
+    main()

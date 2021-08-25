@@ -1,4 +1,5 @@
 import os
+import glob
 import torch
 import numpy as np
 import pandas as pd
@@ -6,11 +7,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import dill
 import string
+import ntpath
 
 from cognitive_modeling.models.utility_models import u_pow, u_lin
 
 
-def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, seed):
+def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
     nrows = len(h_set)
     ncols = len(u_set)*2
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(17, 10))
@@ -133,11 +135,14 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, seed):
 
     fig.tight_layout()
 
-    os.makedirs("fig", exist_ok=True)
-    plt.savefig(f"fig/risk_artificial_seed={seed}.pdf", bbox_inches='tight')
+    fig_name = f"fig/risk_artificial{fig_name_ext}.pdf"
+    os.makedirs(ntpath.dirname(fig_name), exist_ok=True)
+    plt.savefig(fig_name, bbox_inches='tight')
+    plt.close()
+    print(f"Created figure {fig_name}")
 
 
-def create_loss_fig(df_dm, h_set, u_set, seed):
+def create_loss_fig(df_dm, h_set, u_set, fig_name_ext):
     nrows = len(h_set)
     ncols = len(u_set)
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(14, 10))
@@ -160,12 +165,15 @@ def create_loss_fig(df_dm, h_set, u_set, seed):
             ax.set_ylabel("loss")
 
     fig.tight_layout()
-    os.makedirs("fig", exist_ok=True)
-    plt.savefig(f"fig/risk_artificial_loss_seed={seed}.pdf",
-                bbox_inches='tight')
+    fig_name = f"fig/risk_artificial_loss{fig_name_ext}.pdf"
+    os.makedirs(ntpath.dirname(fig_name), exist_ok=True)
+    plt.savefig(fig_name, bbox_inches='tight')
+    plt.close()
+    print(f"Created figure {fig_name}")
 
 
-def main(seed, use_mean_correction):
+def create_figures(bkp_file, fig_name_ext=""):
+
     sns.set_context("paper")
 
     u_truth = u_pow
@@ -173,18 +181,26 @@ def main(seed, use_mean_correction):
     h_set = "sigmoid", "exp", "identity"
     u_set = u_pow, u_lin
 
-    # Loading
-    bkp_file = f"bkp/dm_artificial{'_mean_corrected' if use_mean_correction else ''}_seed={seed}.pkl"
     print(f"Loading from {bkp_file}...")
     df_dm = pd.read_pickle(bkp_file)
     df_dm.dm = df_dm.dm.apply(lambda x: dill.loads(x))
 
     create_main_fig(df_dm=df_dm, h_set=h_set, u_set=u_set,
-                    u_truth=u_truth, theta_truth=theta_truth, seed=seed)
+                    u_truth=u_truth, theta_truth=theta_truth,
+                    fig_name_ext=fig_name_ext)
 
-    create_loss_fig(df_dm=df_dm, h_set=h_set, u_set=u_set, seed=seed)
+    create_loss_fig(df_dm=df_dm, h_set=h_set, u_set=u_set,
+                    fig_name_ext=fig_name_ext)
+
+
+def main():
+    bkp_files = sorted(glob.glob("bkp/dm_artificial_*.pkl"))
+    for bf in bkp_files:
+
+        fig_name_ext = ntpath.splitext(ntpath.basename(bf))[0]\
+            .replace("dm_artificial", "")
+        create_figures(bkp_file=bf, fig_name_ext=fig_name_ext)
 
 
 if __name__ == "__main__":
-    for seed in (1, 12, 123, 12345, 123456, 1234567):
-        main(seed=seed, use_mean_correction=True)
+    main()
