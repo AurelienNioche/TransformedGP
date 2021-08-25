@@ -22,7 +22,7 @@ def main(seed=12345):
     u_set = u_pow, u_lin
 
     n = 350
-    n_samples = 100
+    n_samples = 1000
     learn_inducing_locations = False
     n_inducing_points = 50
     epochs = 300
@@ -69,6 +69,7 @@ def main(seed=12345):
            f"dm_artificial" \
            f"{'_mean_corrected' if use_mean_correction else ''}" \
            f"_seed={seed}" \
+           f"_n_samples={n_samples}" \
            f".pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
