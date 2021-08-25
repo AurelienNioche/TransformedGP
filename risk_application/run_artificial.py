@@ -66,7 +66,7 @@ def run(mean_correction=0, seed=12345):
     # Saving
     df_dm.dm = df_dm.dm.apply(lambda x: dill.dumps(x))
     path = f"bkp/" \
-           f"dm_artificial" \
+           f"dm_artificial_" \
            f"mean_cor={mean_correction}"\
            f"_seed={seed}" \
            f".pkl"

@@ -194,7 +194,7 @@ def create_figures(bkp_file, fig_name_ext=""):
 
 
 def main():
-    bkp_files = sorted(glob.glob("bkp/dm_artificial_*.pkl"))
+    bkp_files = sorted(glob.glob("bkp/dm_artificial*.pkl"))
     for bf in bkp_files:
 
         fig_name_ext = ntpath.splitext(ntpath.basename(bf))[0]\

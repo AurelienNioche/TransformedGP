@@ -44,7 +44,7 @@ def identity(x): return x
 
 def sigmoid_second_derivative(x):
     e_x = torch.exp(x)
-    return - ((e_x - 1)* e_x) / (e_x + 1)**3
+    return - ((e_x - 1) * e_x) / (e_x + 1)**3
 
 
 class DiscrepancyModel:
@@ -271,7 +271,7 @@ class DiscrepancyModel:
         self.r_model.eval()
 
         r_dist = self.r_model(test_x)  # .sample(torch.Size((n_sample,)))
-        r_mean_pred = r_dist.loc_
+        r_mean_pred = r_dist.loc
         r_covar_pred = r_dist.covariance_matrix
         m_pred = self.u(test_x, self.theta)
         h_inv_m_pred = self.h_inv(m_pred)
