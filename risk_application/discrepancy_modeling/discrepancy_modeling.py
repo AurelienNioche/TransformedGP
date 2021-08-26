@@ -123,6 +123,8 @@ class DiscrepancyModel:
             inducing_points=torch.linspace(0, 1, n_inducing_points),
             learn_inducing_locations=learn_inducing_locations)
 
+        self.elbo_end_training = None
+
         self.hist_loss = None
 
     def compute_L_eta_T(self, n_samples, covar):
@@ -263,6 +265,14 @@ class DiscrepancyModel:
         if pbar is not None:
             pbar.close()
 
+        self.r_model.eval()
+
+        with torch.no_grad():
+            # Get predictive output
+            output = self.r_model(self.train_x)
+            # Calc loss and backprop gradients
+            self.elbo_end_training = mll(output, self.train_y)
+
         return self.hist_loss
 
     def pred(self, test_x, n_sample=1000):
@@ -270,15 +280,17 @@ class DiscrepancyModel:
         # Switch to 'eval' mode
         self.r_model.eval()
 
-        r_dist = self.r_model(test_x)  # .sample(torch.Size((n_sample,)))
-        r_mean_pred = r_dist.loc
-        r_covar_pred = r_dist.covariance_matrix
-        m_pred = self.u(test_x, self.theta)
-        h_inv_m_pred = self.h_inv(m_pred)
+        with torch.no_grad():
 
-        f_pred = self.compute_f(h_inv_m=h_inv_m_pred,
-                                r_mean=r_mean_pred,
-                                r_covar=r_covar_pred,
-                                n_samples=n_sample)
+            r_dist = self.r_model(test_x)  # .sample(torch.Size((n_sample,)))
+            r_mean_pred = r_dist.loc
+            r_covar_pred = r_dist.covariance_matrix
+            m_pred = self.u(test_x, self.theta)
+            h_inv_m_pred = self.h_inv(m_pred)
+
+            f_pred = self.compute_f(h_inv_m=h_inv_m_pred,
+                                    r_mean=r_mean_pred,
+                                    r_covar=r_covar_pred,
+                                    n_samples=n_sample)
 
         return m_pred, f_pred
