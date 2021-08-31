@@ -26,4 +26,12 @@ def get(file="data/cpc2018.csv"):
     for i in range(4):
         data[f'x{i}'] = data[f'x{i}'] / max_x
 
+    # n_output_total = len(
+    #     [c for c in data.columns if c.startswith("x")])
+    #
+    # x = np.hstack(
+    #     [data[f"x{i}"].values for i in range(n_output_total)])
+    # print(np.unique(x, return_inverse=))
+    # raise Exception
+
     return data

@@ -63,6 +63,38 @@ class DiscrepancyModel:
             cholesky_max_tries: int = 1000,
             mean_correction: int = 0):
 
+        self.u = u
+        self.theta = theta
+        self.tau = tau
+
+        self.n_samples = n_samples
+
+        self.jitter = jitter
+        self.cholesky_max_tries = cholesky_max_tries
+        self.mean_correction = mean_correction
+
+        self.h, self.h_inv, self.h_second = self.set_h_functions(h)
+
+        self.train_x, self.train_y, self.train_p, self.train_y, \
+            self.train_x_init_order, \
+            self.n_output_total, self.n_output_per_lot \
+            = self.format_data(data)
+
+        self.n_x = self.train_x.size(0)
+        self.n_y = self.train_y.size(0)
+
+        self.h_inv_m = self.h_inv(u(self.train_x, self.theta))
+
+        self.r_model = GPClassificationModel(
+            inducing_points=torch.linspace(0, 1, n_inducing_points),
+            learn_inducing_locations=learn_inducing_locations)
+
+        self.elbo_end_training = None
+        self.hist_loss = None
+
+    @staticmethod
+    def set_h_functions(h):
+
         if h == "sigmoid" or h == torch.sigmoid:
             h = torch.sigmoid
             h_inv = torch.logit
@@ -78,54 +110,35 @@ class DiscrepancyModel:
         else:
             raise ValueError
 
-        self.n_output_total = len(
+        return h, h_inv, h_second
+
+    @staticmethod
+    def format_data(data):
+
+        n_output_total = len(
             [c for c in data.columns if c.startswith("x")])
+        # We assume that there are 2 lotteries with `n_output_per_lot` each
+        n_output_per_lot = n_output_total // 2
 
         x = np.hstack(
-            [data[f"x{i}"].values for i in range(self.n_output_total)])
+            [data[f"x{i}"].values for i in range(n_output_total)])
         p = np.hstack(
-            [data[f"p{i}"].values for i in range(self.n_output_total)])
+            [data[f"p{i}"].values for i in range(n_output_total)])
         y = data.choices.values
 
         x_order = np.argsort(x)
         x_sorted = x[x_order]
         p_sorted = p[x_order]
 
-        # We assume that there are 2 lotteries with `n_output_per_lot` each
-        self.n_output_per_lot = self.n_output_total // 2
+        train_x_init_order = np.argsort(x_order)
 
-        self.init_order = np.argsort(x_order)
+        train_x = torch.from_numpy(x_sorted.astype(np.float32))
+        train_p = torch.from_numpy(p_sorted.astype(np.float32))
+        train_y = torch.from_numpy(y.astype(np.float32))
 
-        self.train_x = torch.from_numpy(x_sorted.astype(np.float32))
-        self.train_p = torch.from_numpy(p_sorted.astype(np.float32))
-        self.train_y = torch.from_numpy(y.astype(np.float32))
-
-        self.u = u
-        self.theta = theta
-        self.tau = tau
-
-        self.h = h
-        self.h_inv = h_inv
-        self.h_second = h_second
-
-        self.n_samples = n_samples
-
-        self.jitter = jitter
-        self.cholesky_max_tries = cholesky_max_tries
-        self.mean_correction = mean_correction
-
-        self.n_x = self.train_x.size(0)
-        self.n_y = self.train_y.size(0)
-
-        self.h_inv_m = self.h_inv(u(self.train_x, self.theta))
-
-        self.r_model = GPClassificationModel(
-            inducing_points=torch.linspace(0, 1, n_inducing_points),
-            learn_inducing_locations=learn_inducing_locations)
-
-        self.elbo_end_training = None
-
-        self.hist_loss = None
+        return train_x, train_y, train_p, train_y, \
+            train_x_init_order, \
+            n_output_total, n_output_per_lot
 
     def compute_L_eta_T(self, n_samples, covar):
         L = psd_safe_cholesky(
@@ -143,8 +156,8 @@ class DiscrepancyModel:
         return self.h(mean + L_eta_T)
 
     def compute_f_cor_mean_specific(self,
-                                     h_inv_m,
-                                     r_mean, r_covar, n_samples):
+                                    h_inv_m,
+                                    r_mean, r_covar, n_samples):
 
         mean = h_inv_m + r_mean
 
@@ -152,7 +165,8 @@ class DiscrepancyModel:
             pass
 
         elif self.h == torch.exp:
-            mean -= 0.5 * torch.ones_like(mean) * self.r_model.covar_module.outputscale
+            mean -= 0.5 * torch.ones_like(mean) \
+                    * self.r_model.covar_module.outputscale
 
         elif self.h == torch.sigmoid:
             output_scale = self.r_model.covar_module.outputscale
@@ -168,8 +182,8 @@ class DiscrepancyModel:
         return self.h(mean + L_eta_T)
 
     def compute_f_cor_mean_taylor(self,
-                                      h_inv_m,
-                                      r_mean, r_covar, n_samples):
+                                  h_inv_m,
+                                  r_mean, r_covar, n_samples):
 
         output_scale = self.r_model.covar_module.outputscale
 
@@ -213,7 +227,7 @@ class DiscrepancyModel:
                            n_samples=self.n_samples)
 
         est_eu_sorted = self.train_p * f
-        est_eu = est_eu_sorted[:, self.init_order]
+        est_eu = est_eu_sorted[:, self.train_x_init_order]
 
         est_eu = est_eu.reshape(self.n_samples, self.n_output_total, self.n_y)
 
