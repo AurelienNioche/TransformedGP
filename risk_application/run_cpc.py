@@ -3,11 +3,16 @@ import pandas as pd
 import dill
 from tqdm.autonotebook import tqdm
 from multiprocessing import Pool, cpu_count
+import numpy as np
 
 from cognitive_modeling.models.utility_models import u_pow
 from cognitive_modeling.cpc_like import fit_cpc_like
 from discrepancy_modeling.discrepancy_modeling_cpc import DiscrepancyModelCPC
 from data.data import get
+
+import git
+
+REPO = git.Repo(search_parent_directories=True)
 
 
 def run_apply_async_multiprocessing(
@@ -70,6 +75,12 @@ def run_single_subject(
             "u": u.__name__,
             "tau": tau,
             "theta": theta,
+            "epochs": epochs,
+            "learning_rate": learning_rate,
+            "seed_cog_fit": seed_cog_fit,
+            "seed_dm_train": seed_dm_train,
+            "git_branch": REPO.active_branch.name,
+            "git_hash": REPO.head.commit.hexsha,
             **other_dm_settings
         }
 
@@ -81,14 +92,15 @@ def run_single_subject(
             raise e
 
 
-def main():
-    multiprocess = True
-
-    mean_correction = 2
-    learning_rate = 0.01
-    epochs = 2000
+def main(mean_correction=1,
+         learning_rate=0.01,
+         epochs=2000,
+         multiprocess=True):
 
     data = get()
+
+    n_inducing_points = 50
+    inducing_points = list(np.linspace(0, 1, n_inducing_points+2)[1:-1])
 
     settings = dict(
         u=u_pow,
@@ -96,14 +108,17 @@ def main():
         learning_rate=learning_rate,
         epochs=epochs,
         n_samples=100,
-        n_inducing_points=50,
+        inducing_points=inducing_points,
         learn_inducing_locations=False,
         mean_correction=mean_correction,
         jitter=1e-07,
         seed_cog_fit=12345,
         seed_dm_train=12345,
         h="sigmoid",
-        silent_error=False)
+        silent_error=True)
+
+    print("Using settings:")
+    print(settings)
 
     counts = data.subject.value_counts()
     subject_325 = counts[counts == 325].index  # Take subjects with 325 trials
@@ -130,8 +145,12 @@ def main():
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
 
-    print(f"Results saved as: {path}")
+    print(f"Results saved as: {path} (n errors={result_list.count({})})")
 
 
 if __name__ == "__main__":
-    main()
+
+    main(
+        mean_correction=2,
+        learning_rate=0.0001,
+        epochs=10000)

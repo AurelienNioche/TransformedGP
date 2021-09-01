@@ -15,7 +15,9 @@ from gpytorch.utils.cholesky import psd_safe_cholesky
 
 class GPClassificationModel(ApproximateGP):
 
-    def __init__(self, inducing_points, learn_inducing_locations):
+    def __init__(self, inducing_points: torch.Tensor,
+                 learn_inducing_locations: bool):
+
         variational_distribution = CholeskyVariationalDistribution(
             num_inducing_points=inducing_points.size(0))
         variational_strategy = VariationalStrategy(
@@ -56,10 +58,10 @@ class DiscrepancyModel:
             theta: Union[int, float],
             h: Union[str, Callable],
             tau: Union[int, float],
+            inducing_points: Union[np.ndarray, torch.Tensor, list],
             learn_inducing_locations: bool = False,
             jitter: Union[int, float] = 1e-07,
             n_samples: int = 40,
-            n_inducing_points: int = 50,
             cholesky_max_tries: int = 1000,
             mean_correction: int = 0):
 
@@ -85,12 +87,25 @@ class DiscrepancyModel:
 
         self.h_inv_m = self.h_inv(u(self.train_x, self.theta))
 
+        inducing_points = self.set_inducing_points(inducing_points)
+
         self.r_model = GPClassificationModel(
-            inducing_points=torch.linspace(0, 1, n_inducing_points),
+            inducing_points=inducing_points,
             learn_inducing_locations=learn_inducing_locations)
 
         self.elbo_end_training = None
         self.hist_loss = None
+
+    @staticmethod
+    def set_inducing_points(inducing_points):
+        if isinstance(inducing_points, list):
+            return torch.tensor(inducing_points)
+        elif isinstance(inducing_points, np.ndarray):
+            return torch.from_numpy(inducing_points)
+        elif isinstance(inducing_points, torch.Tensor):
+            return inducing_points
+        else:
+            raise ValueError
 
     @staticmethod
     def set_h_functions(h):
@@ -306,5 +321,4 @@ class DiscrepancyModel:
                                     r_mean=r_mean_pred,
                                     r_covar=r_covar_pred,
                                     n_samples=n_sample)
-
         return m_pred, f_pred

@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import dill
+import torch
 
 from cognitive_modeling.models.utility_models import u_pow, u_lin
 from simulation.cpc_like import generate_data_cpc_like
@@ -42,6 +43,8 @@ def run(mean_correction=0,
                              seed=seed_cog_fit)
     tau, theta = opt_param
 
+    inducing_points = torch.linspace(0, 1, n_inducing_points)
+
     discrepancy_models = {}
 
     for h in h_set:
@@ -55,7 +58,7 @@ def run(mean_correction=0,
                 h=h,
                 n_samples=n_samples,
                 learn_inducing_locations=learn_inducing_locations,
-                n_inducing_points=n_inducing_points,
+                inducing_points=inducing_points,
                 mean_correction=mean_correction)
 
             dm.train(epochs=epochs, learning_rate=learning_rate,
