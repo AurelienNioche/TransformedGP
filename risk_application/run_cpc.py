@@ -153,4 +153,5 @@ if __name__ == "__main__":
     main(
         mean_correction=2,
         learning_rate=0.0001,
-        epochs=10000)
+        multiprocess=True,
+        epochs=100000)

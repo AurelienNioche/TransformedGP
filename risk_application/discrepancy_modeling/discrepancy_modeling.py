@@ -4,13 +4,16 @@ import numpy as np
 from typing import Callable, Union
 
 import torch
-import torch.distributions as dist
 
 import gpytorch
 from gpytorch.models import ApproximateGP
 from gpytorch.variational import CholeskyVariationalDistribution
 from gpytorch.variational import VariationalStrategy
 from gpytorch.utils.cholesky import psd_safe_cholesky
+
+import git
+
+REPO = git.Repo(search_parent_directories=True)
 
 
 class GPClassificationModel(ApproximateGP):
@@ -51,6 +54,9 @@ def sigmoid_second_derivative(x):
 
 class DiscrepancyModel:
 
+    git_branch = REPO.active_branch.name
+    git_hash = REPO.head.commit.hexsha
+
     def __init__(
             self,
             data: pd.DataFrame,
@@ -64,6 +70,8 @@ class DiscrepancyModel:
             n_samples: int = 40,
             cholesky_max_tries: int = 1000,
             mean_correction: int = 0):
+
+        self.data = data
 
         self.u = u
         self.theta = theta
@@ -95,15 +103,17 @@ class DiscrepancyModel:
 
         self.elbo_end_training = None
         self.hist_loss = None
+        self.hist_output_scale = None
+        self.hist_length_scale = None
 
     @staticmethod
     def set_inducing_points(inducing_points):
         if isinstance(inducing_points, list):
-            return torch.tensor(inducing_points)
+            return torch.Tensor(inducing_points).float()
         elif isinstance(inducing_points, np.ndarray):
-            return torch.from_numpy(inducing_points)
+            return torch.from_numpy(inducing_points.astype(np.float32))
         elif isinstance(inducing_points, torch.Tensor):
-            return inducing_points
+            return inducing_points.float()
         else:
             raise ValueError
 
@@ -141,15 +151,11 @@ class DiscrepancyModel:
             [data[f"p{i}"].values for i in range(n_output_total)])
         y = data.choices.values
 
-        x_order = np.argsort(x)
-        x_sorted = x[x_order]
-        p_sorted = p[x_order]
+        x_unique, train_x_init_order = np.unique(x, return_inverse=True)
 
-        train_x_init_order = np.argsort(x_order)
-
-        train_x = torch.from_numpy(x_sorted.astype(np.float32))
-        train_p = torch.from_numpy(p_sorted.astype(np.float32))
-        train_y = torch.from_numpy(y.astype(np.float32))
+        train_x = torch.from_numpy(x_unique).float()
+        train_p = torch.from_numpy(p).float()
+        train_y = torch.from_numpy(y).float()
 
         return train_x, train_y, train_p, train_y, \
             train_x_init_order, \
@@ -228,10 +234,42 @@ class DiscrepancyModel:
 
         return f
 
+    def format_f(self, f: torch.Tensor):
+
+        return f[:, self.train_x_init_order]
+
+    def compute_logits(self, f: torch.Tensor):
+
+        est_eu = self.train_p * f
+        est_eu = est_eu.reshape(self.n_samples, self.n_output_total, self.n_y)
+
+        est_diff_eu = est_eu[:, self.n_output_per_lot:, :].sum(axis=1) \
+            - est_eu[:, :self.n_output_per_lot, :].sum(axis=1)
+
+        logits = self.tau * est_diff_eu
+        return logits
+
+    @staticmethod
+    def compute_log_prob(logits: torch.Tensor,
+                         observations: torch.Tensor):
+        # Seems more stable than to use dist.Bernoulli
+        p_choice_B = torch.sigmoid(logits)
+        p_choice_y = p_choice_B ** observations \
+            * (1 - p_choice_B) ** (1 - observations)
+        log_prob = torch.log(p_choice_y + np.finfo(float).eps).mean(0)
+
+        # log_prob = \
+        #     dist.Bernoulli(logits=probits).log_prob(observations).mean(0)
+        return log_prob
+
     def expected_log_prob(
             self, 
             observations: torch.Tensor, 
-            function_dist: gpytorch.distributions.MultivariateNormal):
+            function_dist: gpytorch.distributions.MultivariateNormal,
+            n_samples: int = None):
+
+        if n_samples is None:
+            n_samples = self.n_samples
 
         r_mean = function_dist.loc
         r_covar = function_dist.covariance_matrix
@@ -239,18 +277,10 @@ class DiscrepancyModel:
         f = self.compute_f(h_inv_m=self.h_inv_m,
                            r_mean=r_mean,
                            r_covar=r_covar,
-                           n_samples=self.n_samples)
-
-        est_eu_sorted = self.train_p * f
-        est_eu = est_eu_sorted[:, self.train_x_init_order]
-
-        est_eu = est_eu.reshape(self.n_samples, self.n_output_total, self.n_y)
-
-        est_diff_eu = est_eu[:, self.n_output_per_lot:, :].sum(
-            axis=1) - est_eu[:, :self.n_output_per_lot, :].sum(axis=1)
-
-        log_prob = dist.Bernoulli(logits=self.tau * est_diff_eu).log_prob(
-            observations).mean(0)
+                           n_samples=n_samples)
+        f = self.format_f(f)
+        logits = self.compute_logits(f)
+        log_prob = self.compute_log_prob(logits, observations)
         return log_prob
 
     def train(self, learning_rate=0.05, epochs=1000, seed=123,
@@ -272,6 +302,8 @@ class DiscrepancyModel:
             num_data=self.train_y.numel())
 
         self.hist_loss = []
+        self.hist_output_scale = []
+        self.hist_length_scale = []
 
         pbar = tqdm(total=epochs, leave=False) if progress_bar else None
 
@@ -286,6 +318,8 @@ class DiscrepancyModel:
             optimizer.step()
 
             self.hist_loss.append(loss.item())
+            self.hist_output_scale.append(self.r_model.covar_module.outputscale.item())
+            self.hist_length_scale.append(self.r_model.covar_module.base_kernel.lengthscale.item())
 
             if pbar is not None:
                 pbar.set_postfix(loss=loss.item())
@@ -304,7 +338,7 @@ class DiscrepancyModel:
 
         return self.hist_loss
 
-    def pred(self, test_x, n_sample=1000):
+    def pred(self, test_x, n_samples=1000):
 
         # Switch to 'eval' mode
         self.r_model.eval()
@@ -320,5 +354,5 @@ class DiscrepancyModel:
             f_pred = self.compute_f(h_inv_m=h_inv_m_pred,
                                     r_mean=r_mean_pred,
                                     r_covar=r_covar_pred,
-                                    n_samples=n_sample)
+                                    n_samples=n_samples)
         return m_pred, f_pred

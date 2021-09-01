@@ -40,41 +40,23 @@ class DiscrepancyModelCPC(DiscrepancyModel):
         assert train_x_unique[0] == 0 \
                and train_x_unique[-1] == 1, "Code needs to be revised"
         train_x = torch.from_numpy(
-            train_x_unique[1:-1].astype(np.float32))
+            train_x_unique[1:-1]).float()
 
-        train_p = torch.from_numpy(p.astype(np.float32))
-        train_y = torch.from_numpy(y.astype(np.float32))
+        train_p = torch.from_numpy(p).float()
+        train_y = torch.from_numpy(y).float()
 
         return train_x, train_y, train_p, train_y, \
             train_x_init_order, \
             n_output_total, n_output_per_lot
 
-    def expected_log_prob(
-            self, 
-            observations: torch.Tensor, 
-            function_dist: gpytorch.distributions.MultivariateNormal):
-
-        r_mean = function_dist.loc
-        r_covar = function_dist.covariance_matrix
-
-        f = self.compute_f(h_inv_m=self.h_inv_m,
-                           r_mean=r_mean,
-                           r_covar=r_covar,
-                           n_samples=self.n_samples)
+    def format_f(self, f: torch.Tensor):
 
         # For numerical reasons due to the mean correction,
         # we need to 'force' the assumption that
         # f(0) = 0 and f(1) = 1
-        f_ex = torch.zeros((f.shape[0], f.shape[1]+2))
-        f_ex[:, 1:-1] = f
-        f_ex[:, -1] = 1.0
+        _f = torch.zeros((f.shape[0], f.shape[1]+2))
+        _f[:, 1:-1] = f
+        _f[:, -1] = 1.0
 
-        est_eu = self.train_p * f_ex[:, self.train_x_init_order]
-        est_eu = est_eu.reshape(self.n_samples, self.n_output_total, self.n_y)
+        return _f[:, self.train_x_init_order]
 
-        est_diff_eu = est_eu[:, self.n_output_per_lot:, :].sum(
-            axis=1) - est_eu[:, :self.n_output_per_lot, :].sum(axis=1)
-
-        log_prob = dist.Bernoulli(logits=self.tau * est_diff_eu).log_prob(
-            observations).mean(0)
-        return log_prob

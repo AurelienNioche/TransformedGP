@@ -1,7 +1,6 @@
 import numpy as np
-import scipy.special
 import scipy.optimize
-
+import scipy.special
 
 from . models.utility_models import u_pow
 
@@ -33,6 +32,7 @@ def fit_cpc_like(data, u=u_pow, w=None, seed=12345):
                 wpA = pA
                 wpB = pB
 
+
             uxA0 = u(xA0, theta_u)
             uxA1 = u(xA1, theta_u)
             uxB0 = u(xB0, theta_u)
@@ -42,8 +42,9 @@ def fit_cpc_like(data, u=u_pow, w=None, seed=12345):
             seuB = wpB * uxB0 + (1 - wpB) * uxB1
 
             diff_seu = seuB - seuA
+            logits = tau*diff_seu
 
-            p_choice_B = scipy.special.expit(tau * diff_seu)
+            p_choice_B = scipy.special.expit(logits)
             p_choice_y = p_choice_B ** y * (1 - p_choice_B) ** (1 - y)
 
             lls = np.log(p_choice_y + np.finfo(float).eps).sum()
@@ -64,7 +65,6 @@ def fit_cpc_like(data, u=u_pow, w=None, seed=12345):
                                       x0=np.ones(3),
                                       bounds=((0, np.inf),  # tau
                                               (0, np.inf),  # theta_u
-                                              (0, 1),       # theta_w
-                                              ))
+                                              (0, 1),))     # theta_w
 
     return opt.x

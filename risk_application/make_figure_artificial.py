@@ -172,7 +172,11 @@ def create_loss_fig(df_dm, h_set, u_set, fig_name_ext):
     print(f"Created figure {fig_name}")
 
 
-def create_figures(bkp_file, fig_name_ext=""):
+def create_figures(bkp_file, fig_name_ext=None):
+
+    if fig_name_ext is None:
+        fig_name_ext = ntpath.splitext(ntpath.basename(bkp_file))[0]\
+            .replace("dm_artificial", "")
 
     sns.set_context("paper")
 
@@ -194,12 +198,8 @@ def create_figures(bkp_file, fig_name_ext=""):
 
 
 def main():
-    bkp_files = sorted(glob.glob("bkp/dm_artificial*.pkl"))
-    for bf in bkp_files:
 
-        fig_name_ext = ntpath.splitext(ntpath.basename(bf))[0]\
-            .replace("dm_artificial", "")
-        create_figures(bkp_file=bf, fig_name_ext=fig_name_ext)
+    create_figures(bkp_file="bkp/dm_cpc_mean_correction=2_lr=0005_epochs=10000.pkl")
 
 
 if __name__ == "__main__":

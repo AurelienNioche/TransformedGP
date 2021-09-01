@@ -9,7 +9,7 @@ from cognitive_modeling.cpc_like import fit_cpc_like
 from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 
 
-def run(mean_correction=0,
+def run(mean_correction=2,
         seed_data=12345,
         seed_inference=12345):
 
@@ -75,7 +75,7 @@ def run(mean_correction=0,
            f"mean_cor={mean_correction}"\
            f"_seed_data={seed_data}" \
            f"_seed_inference={seed_inference}" \
-           f".pkl"
+           "_new.pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
 
@@ -83,13 +83,14 @@ def run(mean_correction=0,
 
 
 def main():
-    for mean_correction in (0, 1, 2,):
-        for seed_data in (1, 12, 123, 12345, 123456, 1234567):
-            for seed_inference in (1, 12, 123, 12345, 123456, 1234567):
-                run(
-                    seed_data=seed_data,
-                    seed_inference=seed_inference,
-                    mean_correction=mean_correction)
+    # for mean_correction in (0, 1, 2,):
+    #     for seed_data in (1, 12, 123, 12345, 123456, 1234567):
+    #         for seed_inference in (1, 12, 123, 12345, 123456, 1234567):
+    #             run(
+    #                 seed_data=seed_data,
+    #                 seed_inference=seed_inference,
+    #                 mean_correction=mean_correction)
+    run()
 
 
 if __name__ == "__main__":
