@@ -3,7 +3,7 @@ import scipy.special
 import pandas as pd
 
 
-def generate_data_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
+def generate_userdata_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
 
     np.random.seed(seed)
 
@@ -51,3 +51,18 @@ def generate_data_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
     data['choices'] = choices
 
     return data
+
+
+def generate_dataset_cpc_like(starting_seed, n_users, n_trials, u, tau, theta):
+
+    data = []
+    for i in range(n_users):
+        d = generate_userdata_cpc_like(u=u,
+                                       seed=starting_seed+i,
+                                       n=n_trials,
+                                       tau=tau, theta=theta)
+        d['subject'] = i
+        data.append(d)
+
+    return pd.concat(data)
+

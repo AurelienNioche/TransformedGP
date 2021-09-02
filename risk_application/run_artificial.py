@@ -4,18 +4,17 @@ import dill
 import torch
 
 from cognitive_modeling.models.utility_models import u_pow, u_lin
-from simulation.cpc_like import generate_data_cpc_like
+from simulation.cpc_like import generate_userdata_cpc_like
 from cognitive_modeling.cpc_like import fit_cpc_like
 from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 
 
-def run(mean_correction=2,
-        seed_data=12345,
-        seed_inference=12345):
+def run():
 
-    seed_data = seed_data
-    seed_cog_fit = seed_inference
-    seed_dm_train = seed_inference
+    mean_correction = 2
+    seed_data = 12345
+    seed_cog_fit = 12345
+    seed_dm_train = 12345
 
     u_truth = u_pow
     w_truth = None  # Don't model probability distortion
@@ -24,7 +23,7 @@ def run(mean_correction=2,
     h_set = "sigmoid", "exp", "identity"
     u_set = u_pow, u_lin
 
-    n = 350
+    n = 325
     n_samples = 100
     learn_inducing_locations = False
     n_inducing_points = 50
@@ -32,7 +31,23 @@ def run(mean_correction=2,
     learning_rate = 0.05
     mean_correction = mean_correction
 
-    data = generate_data_cpc_like(
+    # --------------------- #
+
+    path = f"bkp/" \
+           f"dm_artificial_" \
+           f"mean_cor={mean_correction}_" \
+           f"lr={str(learning_rate).split('.')[-1]}_" \
+           f"epochs={epochs}_" \
+           f"seed_data={seed_data}_" \
+           f"seed_cog_fit={seed_cog_fit}_" \
+           f"seed_dm_train={seed_dm_train}" \
+           ".pkl"
+
+    print(f"Data will be saved as: {path}")
+
+    # -------------------- #
+
+    data = generate_userdata_cpc_like(
         u=u_truth,
         tau=tau_truth,
         theta=theta_truth,
@@ -45,8 +60,11 @@ def run(mean_correction=2,
 
     inducing_points = torch.linspace(0, 1, n_inducing_points)
 
+    n_runs = len(h_set)*len(u_set)
+
     discrepancy_models = {}
 
+    i = 0
     for h in h_set:
         for u in u_set:
 
@@ -62,20 +80,18 @@ def run(mean_correction=2,
                 mean_correction=mean_correction)
 
             dm.train(epochs=epochs, learning_rate=learning_rate,
-                     seed=seed_dm_train)
+                     seed=seed_dm_train,
+                     progress_bar=True,
+                     progress_bar_desc=f"Run {i+1}/{n_runs}")
 
             discrepancy_models[(u.__name__, h)] = dm
+
+            i += 1
 
     df_dm = pd.DataFrame(discrepancy_models, ["dm"], ).T
 
     # Saving
     df_dm.dm = df_dm.dm.apply(lambda x: dill.dumps(x))
-    path = f"bkp/" \
-           f"dm_artificial_" \
-           f"mean_cor={mean_correction}"\
-           f"_seed_data={seed_data}" \
-           f"_seed_inference={seed_inference}" \
-           "_new.pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
 
@@ -83,13 +99,6 @@ def run(mean_correction=2,
 
 
 def main():
-    # for mean_correction in (0, 1, 2,):
-    #     for seed_data in (1, 12, 123, 12345, 123456, 1234567):
-    #         for seed_inference in (1, 12, 123, 12345, 123456, 1234567):
-    #             run(
-    #                 seed_data=seed_data,
-    #                 seed_inference=seed_inference,
-    #                 mean_correction=mean_correction)
     run()
 
 

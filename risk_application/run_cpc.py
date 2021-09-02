@@ -7,10 +7,11 @@ import numpy as np
 
 from cognitive_modeling.models.utility_models import u_pow
 from cognitive_modeling.cpc_like import fit_cpc_like
-from discrepancy_modeling.discrepancy_modeling_cpc import DiscrepancyModelCPC
+from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 from data.data import get
 
 import git
+
 
 REPO = git.Repo(search_parent_directories=True)
 
@@ -44,6 +45,8 @@ def run_single_subject(
         seed_cog_fit,
         seed_dm_train,
         silent_error,
+        progress_bar=False,
+        progress_bar_desc=None,
         **other_dm_settings):
 
     try:
@@ -54,7 +57,7 @@ def run_single_subject(
         tau = opt_param[0]
         theta = opt_param[1]
 
-        dm = DiscrepancyModelCPC(
+        dm = DiscrepancyModel(
             data=d,
             u=u,
             theta=theta,
@@ -66,7 +69,8 @@ def run_single_subject(
             epochs=epochs,
             learning_rate=learning_rate,
             seed=seed_dm_train,
-            progress_bar=False)
+            progress_bar=progress_bar,
+            progress_bar_desc=progress_bar_desc)
 
         return {
             "subject": s,
@@ -92,10 +96,7 @@ def run_single_subject(
             raise e
 
 
-def main(mean_correction=1,
-         learning_rate=0.01,
-         epochs=2000,
-         multiprocess=True):
+def main(multiprocess=False):
 
     data = get()
 
@@ -105,12 +106,12 @@ def main(mean_correction=1,
     settings = dict(
         u=u_pow,
         w=None,
-        learning_rate=learning_rate,
-        epochs=epochs,
+        learning_rate=0.05,
+        epochs=300,
         n_samples=100,
         inducing_points=inducing_points,
         learn_inducing_locations=False,
-        mean_correction=mean_correction,
+        mean_correction=2,
         jitter=1e-07,
         seed_cog_fit=12345,
         seed_dm_train=12345,
@@ -123,6 +124,19 @@ def main(mean_correction=1,
     counts = data.subject.value_counts()
     subject_325 = counts[counts == 325].index  # Take subjects with 325 trials
 
+    # ----------------------------- #
+
+    path = f"bkp/dm_cpc_" \
+           f"new_" \
+           f"mean_correction={settings['mean_correction']}_" \
+           f"lr={str(settings['learning_rate']).split('.')[-1]}_" \
+           f"epochs={settings['epochs']}" \
+           f".pkl"
+
+    print(f"Data will be saved as: {path}")
+
+    # ----------------------------- #
+
     argument_list = [
         dict(d=data[data.subject == s],
              s=s,
@@ -131,8 +145,9 @@ def main(mean_correction=1,
 
     if not multiprocess:
         result_list = []
-        for arg in argument_list:
-            r = run_single_subject(**arg)
+        for i, arg in enumerate(argument_list):
+            r = run_single_subject(progress_bar=True, progress_bar_desc=f"subject {arg['s']} | global: {i/len(argument_list)*100:.2f}% | user",
+                                   **arg)
             result_list.append(r)
     else:
         result_list = run_apply_async_multiprocessing(
@@ -141,7 +156,6 @@ def main(mean_correction=1,
 
     # Saving
     df_dm = pd.DataFrame(result_list)
-    path = f"bkp/dm_cpc_mean_correction={mean_correction}_lr={str(learning_rate).split('.')[-1]}_epochs={epochs}.pkl"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df_dm.to_pickle(path)
 
@@ -150,8 +164,4 @@ def main(mean_correction=1,
 
 if __name__ == "__main__":
 
-    main(
-        mean_correction=2,
-        learning_rate=0.0001,
-        multiprocess=True,
-        epochs=100000)
+    main()

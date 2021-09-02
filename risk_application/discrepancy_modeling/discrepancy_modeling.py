@@ -4,6 +4,7 @@ import numpy as np
 from typing import Callable, Union
 
 import torch
+import torch.nn as nn
 
 import gpytorch
 from gpytorch.models import ApproximateGP
@@ -47,9 +48,12 @@ def safe_log(x): return torch.log(x + 1e-07)
 def identity(x): return x
 
 
-def sigmoid_second_derivative(x):
-    e_x = torch.exp(x)
-    return - ((e_x - 1) * e_x) / (e_x + 1)**3
+def sigmoid_second_derivative(x, ceil_exp=50.0):
+    y = torch.zeros_like(x)
+    under_ceil = x < ceil_exp
+    e_x = torch.exp(x[under_ceil])
+    y[under_ceil] = - ((e_x - 1) * e_x) / (e_x + 1)**3
+    return y
 
 
 class DiscrepancyModel:
@@ -86,7 +90,6 @@ class DiscrepancyModel:
         self.h, self.h_inv, self.h_second = self.set_h_functions(h)
 
         self.train_x, self.train_y, self.train_p, self.train_y, \
-            self.train_x_init_order, \
             self.n_output_total, self.n_output_per_lot \
             = self.format_data(data)
 
@@ -137,8 +140,7 @@ class DiscrepancyModel:
 
         return h, h_inv, h_second
 
-    @staticmethod
-    def format_data(data):
+    def format_data(self, data):
 
         n_output_total = len(
             [c for c in data.columns if c.startswith("x")])
@@ -151,17 +153,15 @@ class DiscrepancyModel:
             [data[f"p{i}"].values for i in range(n_output_total)])
         y = data.choices.values
 
-        x_unique, train_x_init_order = np.unique(x, return_inverse=True)
-
-        train_x = torch.from_numpy(x_unique).float()
+        train_x = torch.from_numpy(x).float()
         train_p = torch.from_numpy(p).float()
         train_y = torch.from_numpy(y).float()
 
         return train_x, train_y, train_p, train_y, \
-            train_x_init_order, \
             n_output_total, n_output_per_lot
 
     def compute_L_eta_T(self, n_samples, covar):
+
         L = psd_safe_cholesky(
             covar,
             max_tries=self.cholesky_max_tries)
@@ -169,16 +169,15 @@ class DiscrepancyModel:
         L_eta = L @ eta
         return L_eta.T
 
-    def compute_f_no_cor(self, h_inv_m, r_mean, r_covar, n_samples):
+    def compute_f_no_cor(self, h_inv_m, r_mean, L_eta_T):
 
         mean = h_inv_m + r_mean
-        L_eta_T = self.compute_L_eta_T(covar=r_covar,
-                                       n_samples=n_samples)
         return self.h(mean + L_eta_T)
 
     def compute_f_cor_mean_specific(self,
                                     h_inv_m,
-                                    r_mean, r_covar, n_samples):
+                                    r_mean,
+                                    L_eta_T):
 
         mean = h_inv_m + r_mean
 
@@ -186,42 +185,46 @@ class DiscrepancyModel:
             pass
 
         elif self.h == torch.exp:
-            mean -= 0.5 * torch.ones_like(mean) \
-                    * self.r_model.covar_module.outputscale
+            output_scale = self.r_model.covar_module.outputscale
+            can_be_corr = torch.isfinite(mean)
+            mean_to_c = mean[can_be_corr]
+            mean_to_c -= 0.5 * torch.ones_like(mean_to_c) * output_scale
+            mean[can_be_corr] = mean_to_c
 
         elif self.h == torch.sigmoid:
             output_scale = self.r_model.covar_module.outputscale
-            sig_mean = torch.sigmoid(mean)
-            mean = \
-                torch.distributions.Normal(0.0, 1.0).icdf(sig_mean) \
-                * torch.sqrt(output_scale + 0.588 ** (-2))
+            can_be_corr = torch.isfinite(mean)
+            mean_to_c = mean[can_be_corr]
+            sig_mean = torch.sigmoid(mean_to_c)
+            norm_icdf = torch.distributions.Normal(0.0, 1.0).icdf(sig_mean)
+            term_covar = torch.sqrt(output_scale + 0.588 ** (-2))
+            corr_mean = norm_icdf * term_covar
+            mean[can_be_corr] = corr_mean
         else:
             raise ValueError
 
-        L_eta_T = self.compute_L_eta_T(covar=r_covar,
-                                       n_samples=n_samples)
-        return self.h(mean + L_eta_T)
+        out = self.h(mean + L_eta_T)
+        return out
 
     def compute_f_cor_mean_taylor(self,
                                   h_inv_m,
-                                  r_mean, r_covar, n_samples):
+                                  r_mean,
+                                  L_eta_T):
 
         output_scale = self.r_model.covar_module.outputscale
 
-        L_eta_T = self.compute_L_eta_T(covar=r_covar,
-                                       n_samples=n_samples)
+        mean = h_inv_m + r_mean
 
-        r = r_mean + L_eta_T
-        return self.h(h_inv_m + r) \
-            - 0.5 * self.h_second(h_inv_m) * output_scale
+        base = self.h(mean + L_eta_T)
+        corr = - 0.5 * self.h_second(h_inv_m) * output_scale
+        return base + corr
 
-    def compute_f(self, h_inv_m, r_mean, r_covar, n_samples):
+    def compute_f(self, h_inv_m, r_mean, L_eta_T):
 
         kwargs = dict(
             h_inv_m=h_inv_m,
             r_mean=r_mean,
-            r_covar=r_covar,
-            n_samples=n_samples)
+            L_eta_T=L_eta_T)
 
         if self.mean_correction == 0:
             f = self.compute_f_no_cor(**kwargs)
@@ -234,14 +237,11 @@ class DiscrepancyModel:
 
         return f
 
-    def format_f(self, f: torch.Tensor):
-
-        return f[:, self.train_x_init_order]
-
     def compute_logits(self, f: torch.Tensor):
 
+        n_samples = f.shape[0]
         est_eu = self.train_p * f
-        est_eu = est_eu.reshape(self.n_samples, self.n_output_total, self.n_y)
+        est_eu = est_eu.reshape(n_samples, self.n_output_total, self.n_y)
 
         est_diff_eu = est_eu[:, self.n_output_per_lot:, :].sum(axis=1) \
             - est_eu[:, :self.n_output_per_lot, :].sum(axis=1)
@@ -252,6 +252,7 @@ class DiscrepancyModel:
     @staticmethod
     def compute_log_prob(logits: torch.Tensor,
                          observations: torch.Tensor):
+
         # Seems more stable than to use dist.Bernoulli
         p_choice_B = torch.sigmoid(logits)
         p_choice_y = p_choice_B ** observations \
@@ -274,20 +275,25 @@ class DiscrepancyModel:
         r_mean = function_dist.loc
         r_covar = function_dist.covariance_matrix
 
+        L_eta_T = self.compute_L_eta_T(covar=r_covar,
+                                       n_samples=n_samples)
+
         f = self.compute_f(h_inv_m=self.h_inv_m,
                            r_mean=r_mean,
-                           r_covar=r_covar,
-                           n_samples=n_samples)
-        f = self.format_f(f)
+                           L_eta_T=L_eta_T)
+
         logits = self.compute_logits(f)
         log_prob = self.compute_log_prob(logits, observations)
         return log_prob
 
     def train(self, learning_rate=0.05, epochs=1000, seed=123,
-              progress_bar=True):
+              progress_bar=True,
+              progress_bar_desc=None):
 
         # Seed torch
         torch.random.manual_seed(seed)
+
+        torch.autograd.set_detect_anomaly(True)
 
         # Switch to 'train' mode
         self.r_model.train()
@@ -305,7 +311,8 @@ class DiscrepancyModel:
         self.hist_output_scale = []
         self.hist_length_scale = []
 
-        pbar = tqdm(total=epochs, leave=False) if progress_bar else None
+        pbar = tqdm(total=epochs, leave=False, desc=progress_bar_desc) \
+            if progress_bar else None
 
         for i in range(epochs):
             # Zero backpropped gradients from previous iteration
@@ -315,11 +322,17 @@ class DiscrepancyModel:
             # Calc loss and backprop gradients
             loss = -mll(output, self.train_y)
             loss.backward()
+            # for name, param in self.r_model.named_parameters():
+            #     if param.requires_grad:
+            #         print(f"gradient {name}", param.grad.norm())
             optimizer.step()
 
-            self.hist_loss.append(loss.item())
-            self.hist_output_scale.append(self.r_model.covar_module.outputscale.item())
-            self.hist_length_scale.append(self.r_model.covar_module.base_kernel.lengthscale.item())
+            loss_value = loss.item()
+            output_scale = self.r_model.covar_module.outputscale.item()
+            length_scale = self.r_model.covar_module.base_kernel.lengthscale.item()
+            self.hist_loss.append(loss_value)
+            self.hist_output_scale.append(output_scale)
+            self.hist_length_scale.append(length_scale)
 
             if pbar is not None:
                 pbar.set_postfix(loss=loss.item())
@@ -350,9 +363,10 @@ class DiscrepancyModel:
             r_covar_pred = r_dist.covariance_matrix
             m_pred = self.u(test_x, self.theta)
             h_inv_m_pred = self.h_inv(m_pred)
+            L_eta_T = self.compute_L_eta_T(covar=r_covar_pred,
+                                           n_samples=n_samples)
 
             f_pred = self.compute_f(h_inv_m=h_inv_m_pred,
                                     r_mean=r_mean_pred,
-                                    r_covar=r_covar_pred,
-                                    n_samples=n_samples)
+                                    L_eta_T=L_eta_T)
         return m_pred, f_pred

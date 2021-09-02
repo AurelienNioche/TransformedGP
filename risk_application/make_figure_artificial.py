@@ -1,5 +1,4 @@
 import os
-import glob
 import torch
 import numpy as np
 import pandas as pd
@@ -13,9 +12,11 @@ from cognitive_modeling.models.utility_models import u_pow, u_lin
 
 
 def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
+
     nrows = len(h_set)
     ncols = len(u_set)*2
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(17, 10))
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(8, 5))
 
     err_max = - np.inf
     err_min = np.inf
@@ -38,7 +39,7 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
 
             test_x = test_x.numpy()
             m_pred = m_pred.numpy()
-            f_pred = f_pred.detach().numpy()
+            f_pred = f_pred.numpy()
 
             truth = u_truth(test_x, theta_truth)
 
@@ -73,8 +74,6 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
             ax.set_xlabel("reward")
             ax.set_ylabel("utility")
 
-            # ax.legend(handles=[h_model, h_mean, h_conf])
-
             ax = ax1
 
             corr = f_mean - m_pred
@@ -104,7 +103,8 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
 
     fig.legend(
         handles=[h_model, corr_mean, h_mean, corr_conf, h_conf, h_truth],
-        bbox_to_anchor=(0.5, -0.05), loc="lower center",
+        bbox_to_anchor=(0.48, -0.09), loc="lower center",
+        prop={'size': 11},
         bbox_transform=fig.transFigure, ncol=3)
 
     for axes_ in axes[:, 1::2]:
@@ -115,21 +115,19 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
         for ax in axes_:
             ax.set_ylim(-0.25, 1.25)
 
-    fig.text(0.18, 0.99, "Assuming the adequate utility model ('pow')",
-             fontsize=14, transform=fig.transFigure,
-             verticalalignment='center')
+    fig.text(0.1, 0.99, "Assuming the adequate utility model", fontsize=12,
+             transform=fig.transFigure)
 
-    fig.text(0.6, 0.99, "Assuming a linear utility model (instead of 'pow')",
-             fontsize=14, transform=fig.transFigure,
-             verticalalignment='center')
+    fig.text(0.56, 0.99, "Assuming a linear utility model instead",
+             fontsize=12, transform=fig.transFigure)
 
-    fig.text(-0.01, 0.82, "h: sigmoid", fontsize=14, transform=fig.transFigure,
+    fig.text(-0.01, 0.84, "h: sigmoid", fontsize=14, transform=fig.transFigure,
              verticalalignment='center', rotation=90)
 
-    fig.text(-0.01, 0.5, "h: exp", fontsize=14, transform=fig.transFigure,
+    fig.text(-0.01, 0.52, "h: exp", fontsize=14, transform=fig.transFigure,
              verticalalignment='center', rotation=90)
 
-    fig.text(-0.01, 0.18, "h: identity", fontsize=14,
+    fig.text(-0.01, 0.19, "h: identity", fontsize=14,
              transform=fig.transFigure,
              verticalalignment='center', rotation=90)
 
@@ -143,8 +141,10 @@ def create_main_fig(df_dm, h_set, u_set, u_truth, theta_truth, fig_name_ext):
 
 
 def create_loss_fig(df_dm, h_set, u_set, fig_name_ext):
+
     nrows = len(h_set)
     ncols = len(u_set)
+
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(14, 10))
 
     letters = (letter for letter in string.ascii_uppercase)
@@ -165,6 +165,7 @@ def create_loss_fig(df_dm, h_set, u_set, fig_name_ext):
             ax.set_ylabel("loss")
 
     fig.tight_layout()
+
     fig_name = f"fig/risk_artificial_loss{fig_name_ext}.pdf"
     os.makedirs(ntpath.dirname(fig_name), exist_ok=True)
     plt.savefig(fig_name, bbox_inches='tight')
@@ -198,8 +199,8 @@ def create_figures(bkp_file, fig_name_ext=None):
 
 
 def main():
-
-    create_figures(bkp_file="bkp/dm_cpc_mean_correction=2_lr=0005_epochs=10000.pkl")
+    bkp_file = "bkp/dm_cpc_new_mean_correction=2_lr=05_epochs=300.pkl"
+    create_figures(bkp_file=bkp_file)
 
 
 if __name__ == "__main__":
