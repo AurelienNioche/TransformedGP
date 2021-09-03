@@ -4,7 +4,6 @@ import numpy as np
 from typing import Callable, Union
 
 import torch
-import torch.nn as nn
 
 import gpytorch
 from gpytorch.models import ApproximateGP

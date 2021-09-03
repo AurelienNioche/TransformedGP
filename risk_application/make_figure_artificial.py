@@ -199,8 +199,8 @@ def create_figures(bkp_file, fig_name_ext=None):
 
 
 def main():
-    bkp_file = "bkp/dm_cpc_new_mean_correction=2_lr=05_epochs=300.pkl"
-    create_figures(bkp_file=bkp_file)
+    bkp_file = "bkp/dm_artificial_mean_cor=2_lr=05_epochs=300_seed_data=12345_seed_cog_fit=12345_seed_dm_train=12345.pkl"
+    create_figures(bkp_file=bkp_file, fig_name_ext="")
 
 
 if __name__ == "__main__":

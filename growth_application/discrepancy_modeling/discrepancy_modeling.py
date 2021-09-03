@@ -106,13 +106,13 @@ class DiscrepancyModel:
             # Make predictions by feeding model through likelihood
             observed_pred = self.likelihood(self.gp(test_x))
 
-            # Get upper and lower confidence bounds
-            gp_lower, gp_upper = observed_pred.confidence_region()
-            gp_lower = gp_lower.numpy()
-            gp_upper = gp_upper.numpy()
-
             # Get mean
             gp_mean = observed_pred.mean.numpy()
+
+            # Get upper and lower confidence bounds
+            gp_std = observed_pred.stddev.numpy()
+            gp_lower = gp_mean - 1.96*gp_std
+            gp_upper = gp_mean + 1.96*gp_std
 
         m_pred = self.m.forward(test_x, self.theta).numpy()
         return m_pred, gp_mean, gp_lower, gp_upper

@@ -60,14 +60,18 @@ def plot_single(dm, s):
     return fig
 
 
-def main():
-    backup_file = "bkp/"
+def make_individual_plots(dataset=None, backup_file=None):
+    assert backup_file is not None or dataset is not None
 
-    # Loading
-    df_dm = pd.read_pickle(backup_file)
-    df_dm.dm = df_dm.dm.apply(lambda x: dill.loads(x))
-    df_dm.index = df_dm.subject
-    df_dm.drop("subject", axis=1, inplace=True)
+    if dataset is None:
+        # Loading
+        df_dm = pd.read_pickle(backup_file)
+        df_dm.dm = df_dm.dm.apply(lambda x: dill.loads(x))
+        df_dm.index = df_dm.subject
+        df_dm.drop("subject", axis=1, inplace=True)
+    else:
+        assert isinstance(dataset, pd.DataFrame)
+        df_dm = dataset
 
     figs = []
 
@@ -83,6 +87,10 @@ def main():
     for fig in figs:
         pp.savefig(fig)
     pp.close()
+
+
+def main():
+    backup_file = "bkp/XXX"
 
 
 if __name__ == "__main__":
