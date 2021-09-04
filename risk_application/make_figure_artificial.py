@@ -173,6 +173,33 @@ def create_loss_fig(df_dm, h_set, u_set, fig_name_ext):
     print(f"Created figure {fig_name}")
 
 
+def compute_statistics(df_dm, u_set, h_set, u_truth, theta_truth):
+    for u in u_set:
+        for h in h_set:
+
+            dm = df_dm.loc[(u.__name__, h)].item()
+
+            test_x = torch.linspace(0.0, 1.0, 1000)
+            m_pred, f_pred = dm.pred(test_x, n_samples=1000)
+
+            truth = u_truth(test_x.numpy(), theta_truth)
+
+            m_pred = f_pred.numpy()
+            f_pred = f_pred.numpy()
+
+            f_mean = f_pred.mean(axis=0)
+            lower, upper = np.percentile(f_pred, [2.5, 97.5], axis=0)
+
+            d_mean_x = np.abs(f_mean - m_pred)
+            err_x = np.abs(f_mean - truth)
+            d_unc_x = upper - lower
+
+            d_mean = d_mean_x.mean()
+            d_unc = d_unc_x.mean()
+            err = err_x.mean()
+            print(f"{u.__name__} {h}: d_mean={d_mean:.3f}; d_unc={d_unc:.3f}; {err:.3f}")
+
+
 def create_figures(bkp_file, fig_name_ext=None):
 
     if fig_name_ext is None:
@@ -190,6 +217,9 @@ def create_figures(bkp_file, fig_name_ext=None):
     df_dm = pd.read_pickle(bkp_file)
     df_dm.dm = df_dm.dm.apply(lambda x: dill.loads(x))
 
+    compute_statistics(df_dm=df_dm, h_set=h_set, u_set=u_set,
+                       u_truth=u_truth, theta_truth=theta_truth)
+
     create_main_fig(df_dm=df_dm, h_set=h_set, u_set=u_set,
                     u_truth=u_truth, theta_truth=theta_truth,
                     fig_name_ext=fig_name_ext)
@@ -199,7 +229,7 @@ def create_figures(bkp_file, fig_name_ext=None):
 
 
 def main():
-    bkp_file = "bkp/dm_artificial_mean_cor=2_lr=05_epochs=300_seed_data=12345_seed_cog_fit=12345_seed_dm_train=12345.pkl"
+    bkp_file = "bkp/dm_artificial_mean_cor=2_lr=05_epochs=1000_seed_data=12345_seed_cog_fit=12345_seed_dm_train=12345.pkl"
     create_figures(bkp_file=bkp_file, fig_name_ext="")
 
 

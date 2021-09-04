@@ -9,12 +9,10 @@ from cognitive_modeling.cpc_like import fit_cpc_like
 from discrepancy_modeling.discrepancy_modeling import DiscrepancyModel
 
 
-def run():
+def run(seed_data=12345, seed_dm_train=12345):
 
     mean_correction = 2
-    seed_data = 12345
     seed_cog_fit = 12345
-    seed_dm_train = 12345
 
     u_truth = u_pow
     w_truth = None  # Don't model probability distortion
@@ -27,7 +25,7 @@ def run():
     n_samples = 100
     learn_inducing_locations = False
     n_inducing_points = 50
-    epochs = 300
+    epochs = 1000
     learning_rate = 0.05
     mean_correction = mean_correction
 
@@ -99,7 +97,10 @@ def run():
 
 
 def main():
-    run()
+    for seed_dm_train in (1, 12, 123, 12345, 123456):
+        for seed_data in (1, 12, 123, 1234, 12345, 123456):
+            run(seed_dm_train=seed_dm_train,
+                seed_data=seed_data)
 
 
 if __name__ == "__main__":

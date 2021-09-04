@@ -96,7 +96,7 @@ def run_single_subject(
             raise e
 
 
-def main(multiprocess=False):
+def main(multiprocess=True):
 
     data = get()
 
@@ -107,7 +107,7 @@ def main(multiprocess=False):
         u=u_pow,
         w=None,
         learning_rate=0.05,
-        epochs=300,
+        epochs=1000,
         n_samples=100,
         inducing_points=inducing_points,
         learn_inducing_locations=False,
