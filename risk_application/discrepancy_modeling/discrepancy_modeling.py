@@ -292,6 +292,7 @@ class DiscrepancyModel:
         # Seed torch
         torch.random.manual_seed(seed)
 
+        # Make the debug easier
         torch.autograd.set_detect_anomaly(True)
 
         # Switch to 'train' mode
@@ -313,10 +314,14 @@ class DiscrepancyModel:
         pbar = tqdm(total=epochs, leave=False, desc=progress_bar_desc) \
             if progress_bar else None
 
-        for name, p in self.r_model.named_parameters():
-            if p.requires_grad():
-                print(f"{name}: {p.data}")
-
+        # for name, p in self.r_model.named_parameters():
+        #     if p.requires_grad:
+        #         print(f"{name}: {p.data.shape}")
+        # out:
+        # variational_strategy._variational_distribution.variational_mean: torch.Size([50])
+        # variational_strategy._variational_distribution.chol_variational_covar: torch.Size([50, 50])
+        # covar_module.raw_outputscale: torch.Size([])   # Contains only one item
+        # covar_module.base_kernel.raw_lengthscale: torch.Size([1, 1])  # Contains also one item (but different tensor shape)
         for i in range(epochs):
             # Zero backpropped gradients from previous iteration
             optimizer.zero_grad()

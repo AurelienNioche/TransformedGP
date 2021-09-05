@@ -146,7 +146,8 @@ def main(multiprocess=True):
     if not multiprocess:
         result_list = []
         for i, arg in enumerate(argument_list):
-            r = run_single_subject(progress_bar=True, progress_bar_desc=f"subject {arg['s']} | global: {i/len(argument_list)*100:.2f}% | user",
+            r = run_single_subject(progress_bar=True,
+                                   progress_bar_desc=f"subject {arg['s']} | global: {i/len(argument_list)*100:.2f}% | user",
                                    **arg)
             result_list.append(r)
     else:
