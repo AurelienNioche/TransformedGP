@@ -313,6 +313,10 @@ class DiscrepancyModel:
         pbar = tqdm(total=epochs, leave=False, desc=progress_bar_desc) \
             if progress_bar else None
 
+        for name, p in self.r_model.named_parameters():
+            if p.requires_grad():
+                print(f"{name}: {p.data}")
+
         for i in range(epochs):
             # Zero backpropped gradients from previous iteration
             optimizer.zero_grad()

@@ -97,10 +97,11 @@ def run(seed_data=12345, seed_dm_train=12345):
 
 
 def main():
-    for seed_dm_train in (1, 12, 123, 12345, 123456):
-        for seed_data in (1, 12, 123, 1234, 12345, 123456):
-            run(seed_dm_train=seed_dm_train,
-                seed_data=seed_data)
+    # for seed_dm_train in (1, 12, 123, 12345, 123456):
+    #     for seed_data in (1, 12, 123, 1234, 12345, 123456):
+    #         run(seed_dm_train=seed_dm_train,
+    #             seed_data=seed_data)
+    run()
 
 
 if __name__ == "__main__":
