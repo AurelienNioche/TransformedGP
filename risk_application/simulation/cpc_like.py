@@ -3,7 +3,7 @@ import scipy.special
 import pandas as pd
 
 
-def generate_userdata_cpc_like(u, seed=123, n=100, tau=3.333, theta=0.5):
+def generate_userdata_cpc_like(u, n, tau, theta, seed=123):
 
     np.random.seed(seed)
 

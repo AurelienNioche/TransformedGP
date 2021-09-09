@@ -32,13 +32,11 @@ def compute_roc_auc(d, tau, u_func, theta=None):
     logits = tau * diff_seu
 
     p_choice_B = scipy.special.expit(logits)
-    p_choice_y = p_choice_B ** y * (1 - p_choice_B) ** (1 - y)
-
-    log_prob = np.log(p_choice_y + np.finfo(float).eps)
-    prob = np.exp(log_prob)
 
     try:
-        roc_auc_d = roc_auc_score(y, prob)
+        # Need to use probability of the 'highest' class
+        # Here, means '1', which corresponds to a 'B' choice
+        roc_auc_d = roc_auc_score(y, p_choice_B)
     except ValueError as e:
         print(e)
         roc_auc_d = np.nan
@@ -55,47 +53,21 @@ def compute_accuracy_initial_model(dm):
     return compute_roc_auc(d=d, tau=tau, u_func=u, theta=theta)
 
 
-# def compute_accuracy_corrected_model(dm, n_samples=10000):
-#
-#     d = dm.data
-#     tau = dm.tau
-#
-#     u_func = lambda x, _: dm.pred(torch.from_numpy(x).float(),
-#                                   n_samples=n_samples)[-1].numpy().mean(0)
-#
-#     return compute_roc_auc(d=d, tau=tau, u_func=u_func, theta=None)
-
-
 def compute_accuracy_corrected_model(dm, n_samples=10000):
 
     d = dm.data
-    y = d.choices.values
+    tau = dm.tau
 
-    dm.r_model.eval()
-    with torch.no_grad():
-        r_dist = dm.r_model(dm.train_x)
-        log_prob = dm.expected_log_prob(function_dist=r_dist,
-                                        observations=dm.train_y,
-                                        n_samples=n_samples)
-        prob = torch.exp(log_prob).numpy()
+    u_func = lambda x, _: dm.pred(torch.from_numpy(x).float(),
+                                  n_samples=n_samples)[-1].numpy().mean(0)
 
-    try:
-        roc_auc_d = roc_auc_score(y, prob)
-    except ValueError as e:
-        print(e)
-        roc_auc_d = np.nan
-    return roc_auc_d
+    return compute_roc_auc(d=d, tau=tau, u_func=u_func, theta=None)
 
 
 def accuracy_comparison_single(dm):
 
     roc_auc_m = compute_accuracy_initial_model(dm=dm)
     roc_auc_dm = compute_accuracy_corrected_model(dm=dm)
-    # if dataset == "artificial":
-    # elif dataset == "cpc":
-    #     roc_auc_dm = compute_accuracy_corrected_model_cpc(dm=dm)
-    # else:
-    #     raise ValueError
     return roc_auc_m, roc_auc_dm
 
 

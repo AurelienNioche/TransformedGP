@@ -96,7 +96,8 @@ def run_single_subject(
             raise e
 
 
-def main(multiprocess=True):
+def run(multiprocess=True,
+        seed_dm_train=12345):
 
     data = get()
 
@@ -114,7 +115,7 @@ def main(multiprocess=True):
         mean_correction=2,
         jitter=1e-07,
         seed_cog_fit=12345,
-        seed_dm_train=12345,
+        seed_dm_train=seed_dm_train,
         h="sigmoid",
         silent_error=True)
 
@@ -127,10 +128,11 @@ def main(multiprocess=True):
     # ----------------------------- #
 
     path = f"bkp/dm_cpc_" \
-           f"new_" \
            f"mean_correction={settings['mean_correction']}_" \
            f"lr={str(settings['learning_rate']).split('.')[-1]}_" \
-           f"epochs={settings['epochs']}" \
+           f"epochs={settings['epochs']}_" \
+           f"seed_cog_fit={settings['seed_cog_fit']}_" \
+           f"seed_dm_train={settings['seed_dm_train']}" \
            f".pkl"
 
     print(f"Data will be saved as: {path}")
@@ -161,6 +163,13 @@ def main(multiprocess=True):
     df_dm.to_pickle(path)
 
     print(f"Results saved as: {path} (n errors={result_list.count({})})")
+
+
+def main():
+
+    # for seed_dm_train in (1, 12, 123, 1234, 12345, 123456):
+    #     run(seed_dm_train=seed_dm_train)
+    run()
 
 
 if __name__ == "__main__":

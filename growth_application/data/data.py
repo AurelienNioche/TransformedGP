@@ -40,9 +40,13 @@ def get_data(n_per_group=100, seed=123):
     obs_height = []
 
     for a in ages:
-        obs_height += list(np.random.normal(pop_param.loc[a, 0.500],
-                                            pop_param.loc[a, 0.840] -
-                                            pop_param.loc[a, 0.500],
+        mean = pop_param.loc[a, 0.50]
+        # 68% data lies in [mu - std, mu + std]
+        # -> 50 + 68/2 = 0.84
+        std = pop_param.loc[a, 0.84] - mean
+        print(f"Age={a}; mean={mean:.2f}, std={std:.2f}; expected uncertainty: {2*1.96*std:.2f}")
+        obs_height += list(np.random.normal(mean,
+                                            std,
                                             size=n_per_group))
         obs_age += [a, ] * n_per_group
 

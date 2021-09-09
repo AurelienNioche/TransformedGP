@@ -32,6 +32,5 @@ def get(file="data/cpc2018.csv"):
     # x = np.hstack(
     #     [data[f"x{i}"].values for i in range(n_output_total)])
     # print(np.unique(x, return_inverse=))
-    # raise Exception
 
     return data

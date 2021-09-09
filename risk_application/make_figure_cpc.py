@@ -98,6 +98,8 @@ def main_plot(d_mean, d_unc, dm_low, dm_medium, dm_high, dm_uncertain,
     ax = fig.add_subplot(gs_left[0])
 
     sns.kdeplot(d_mean, ax=ax)
+    x, y = ax.get_lines()[0].get_data()
+    print(f"x-value mode KDE discr.={x[y.argmax()]:.3f}")
     ax.set_xlim(0, None)
     ax.set_xlabel("Discrepancy")
 
@@ -108,6 +110,8 @@ def main_plot(d_mean, d_unc, dm_low, dm_medium, dm_high, dm_uncertain,
     ax = fig.add_subplot(gs_left[1])
 
     sns.kdeplot(d_unc, ax=ax)
+    x, y = ax.get_lines()[0].get_data()
+    print(f"x-value mode KDE discr. unc.={x[y.argmax()]:.3f}")
     ax.set_xlim(0, None)
     ax.set_xlabel("Discr. uncertainty")
 
@@ -131,7 +135,7 @@ def main_plot(d_mean, d_unc, dm_low, dm_medium, dm_high, dm_uncertain,
     axes = (ax for ax in all_axes)
 
     for dm, dm_name in ((dm_low, "Human - Low discrepancy"),
-                        (dm_medium, "Human - Medium discr."),
+                        (dm_medium, "Human - Moderate discr."),
                         (dm_high, "Human - High discrepancy"),
                         (dm_uncertain, "Human - Uncertain discr.")):
         ax = next(axes)
@@ -190,26 +194,23 @@ def accuracy_plot(df_dm, fig_name_ext):
     roc_dm_all = df_dm.roc_dm.values
 
     improvement = roc_dm_all - roc_m_all
-    print("absolute improvement", np.nanmean(improvement),
-          np.nanstd(improvement))
+    print(f"ROC-AUC improvement: "
+          f"{np.nanmean(improvement)} +/= {np.nanstd(improvement)}SD")
 
-    fig, axes = plt.subplots(nrows=3)
+    fig, axes = plt.subplots(nrows=2)
 
     ax = axes[0]
-    sns.kdeplot(improvement, ax=ax)
-    ax.set_xlabel("Absolute improvement ROC-AUC score")
-
-    rel_improvement = (roc_dm_all - roc_m_all) / roc_m_all
-    print("relative improvement", np.nanmean(rel_improvement),
-          np.nanstd(rel_improvement))
+    sns.kdeplot(roc_m_all, ax=ax, label="Before corr.")
+    sns.kdeplot(roc_dm_all, ax=ax, label="After corr.")
+    ax.set_xlabel("ROC-AUC score")
+    ax.legend()
 
     ax = axes[1]
-    sns.kdeplot(rel_improvement, ax=ax)
-    ax.set_xlabel("Relative improvement ROC-AUC score")
-
-    ax = axes[2]
-    ax.plot((0, 1), (0, 1), ls="--", color="0.4")
     sns.scatterplot(x=roc_m_all, y=roc_dm_all, ax=ax)
+    ax.plot((ax.get_xlim()[0], 1), (ax.get_xlim()[0], 1),
+            ls="--", color="0.4", zorder=-3)
+    ax.set_xlabel("ROC-AUC score before corr.")
+    ax.set_xlabel("ROC-AUC score after corr.")
 
     fig.tight_layout()
 
@@ -220,26 +221,33 @@ def accuracy_plot(df_dm, fig_name_ext):
     print(f"Created figure {fig_name}")
 
 
-def data_processing(df_dm):
-    for s in tqdm(df_dm.subject.values):
-        s_idx = df_dm[df_dm.subject == s].index.item()
+def data_processing(df_dm, bkp_file):
+    if "d_mean" not in df_dm.columns:
+        for s in tqdm(df_dm.subject.values):
+            s_idx = df_dm[df_dm.subject == s].index.item()
 
-        dm = df_dm.iloc[s_idx].dm
+            dm = df_dm.iloc[s_idx].dm
 
-        test_x = torch.linspace(0.0, 1.00, 1000)
-        m_pred, f_pred = dm.pred(test_x, n_samples=1000)
+            test_x = torch.linspace(0.0, 1.00, 1000)
+            m_pred, f_pred = dm.pred(test_x, n_samples=1000)
 
-        m_pred = m_pred.numpy()
-        f_pred = f_pred.numpy()
+            m_pred = m_pred.numpy()
+            f_pred = f_pred.numpy()
 
-        f_mean = f_pred.mean(axis=0)
-        lower, upper = np.percentile(f_pred, [2.5, 97.5], axis=0)
+            f_mean = f_pred.mean(axis=0)
+            lower, upper = np.percentile(f_pred, [2.5, 97.5], axis=0)
 
-        d_mean_x = np.abs(f_mean - m_pred)
-        d_unc_x = upper - lower
+            d_mean_x = np.abs(f_mean - m_pred)
+            d_unc_x = upper - lower
 
-        df_dm.loc[df_dm.subject == s, "d_mean"] = d_mean_x.mean()
-        df_dm.loc[df_dm.subject == s, "d_unc"] = d_unc_x.mean()
+            df_dm.loc[df_dm.subject == s, "d_mean"] = d_mean_x.mean()
+            df_dm.loc[df_dm.subject == s, "d_unc"] = d_unc_x.mean()
+
+        # Save computed values
+        loaded_dm = df_dm.dm.copy()
+        df_dm.dm = df_dm.dm.apply(lambda x: dill.dumps(x))
+        df_dm.to_pickle(bkp_file)
+        df_dm.dm = loaded_dm
 
     d_mean = df_dm.d_mean.values
     d_unc = df_dm.d_unc.values
@@ -307,7 +315,8 @@ def create_figures(bkp_file, fig_name_ext=None):
     df_dm = pd.read_pickle(bkp_file)
     df_dm.dm = df_dm.dm.apply(lambda x: dill.loads(x))
 
-    d_mean, d_unc, dm_low, dm_medium, dm_high, dm_uncertain = data_processing(df_dm)
+    d_mean, d_unc, dm_low, dm_medium, dm_high, dm_uncertain = data_processing(df_dm, bkp_file)
+
     main_plot(
         d_mean=d_mean, d_unc=d_unc,
         dm_low=dm_low,
@@ -316,13 +325,12 @@ def create_figures(bkp_file, fig_name_ext=None):
         dm_uncertain=dm_uncertain,
         fig_name_ext=fig_name_ext)
 
-    # individual_plots(df_dm=df_dm, fig_name_ext=fig_name_ext)
-    # accuracy_plot(df_dm=df_dm, fig_name_ext=fig_name_ext)
-
+    accuracy_plot(df_dm=df_dm, fig_name_ext=fig_name_ext)
+    individual_plots(df_dm=df_dm, fig_name_ext=fig_name_ext)
 
 def main():
 
-    bf = "bkp/dm_cpc_new_mean_correction=2_lr=05_epochs=1000.pkl"
+    bf = "bkp/dm_cpc_mean_correction=2_lr=05_epochs=1000_seed_cog_fit=12345_seed_dm_train=12345.pkl"
     create_figures(bkp_file=bf, fig_name_ext="")
 
 
