@@ -197,7 +197,7 @@ class DiscrepancyModel:
             sig_mean = torch.sigmoid(mean_to_c)
             norm_icdf = torch.distributions.Normal(0.0, 1.0).icdf(sig_mean)
             term_covar = torch.sqrt(output_scale + 0.588 ** (-2))
-            corr_mean = norm_icdf * term_covar
+            corr_mean = norm_icdf * term_covar - h_inv_m
             mean[can_be_corr] = corr_mean
         else:
             raise ValueError
