@@ -35,7 +35,10 @@ class GPRegression:
 
         self.hist_loss = []
 
-    def train(self, epochs=100, learning_rate=0.1):
+    def train(self, seed=123, epochs=100, learning_rate=0.1):
+
+        # Seed torch
+        torch.random.manual_seed(seed)
 
         # Find optimal model hyperparameters
         self.gp.train()
