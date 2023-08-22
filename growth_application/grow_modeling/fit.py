@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.optimize
+from scipy.optimize import minimize
 
 
 def fit(model, data, seed):
@@ -9,7 +9,5 @@ def fit(model, data, seed):
         return np.mean((data.height.values - pred) ** 2)
 
     np.random.seed(seed)
-    res = scipy.optimize.minimize(fun=loss,
-                                  x0=model.x0,
-                                  method='BFGS')
+    res = minimize(fun=loss, x0=model.x0, method='BFGS')
     return res

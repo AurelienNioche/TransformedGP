@@ -91,6 +91,8 @@ class DiscrepancyModel:
         pbar = tqdm(total=epochs, desc=progress_bar_desc) \
             if progress_bar else None
 
+        # pbar = None
+
         for i in range(epochs):
             # Zero gradients from previous iteration
             optimizer.zero_grad()
@@ -113,13 +115,27 @@ class DiscrepancyModel:
             noise = self.gp.likelihood.noise_covar.noise.item()
             output_scale = self.gp.covar_module.outputscale.item()
             length_scale = self.gp.covar_module.base_kernel.lengthscale.item()
+
+            # print(f"[Epoch {i}] Noise: {noise:.2f}")
+            # print(f"[Epoch {i}] Outputscale: {output_scale:.2f}")
+            # print(f"[Epoch {i}] Lengthscale: {length_scale:.2f}")
+
             self.hist_loss.append(loss)
             self.hist_noise.append(noise)
             self.hist_outputscale.append(output_scale)
             self.hist_lengthscale.append(length_scale)
 
+        # noise = self.gp.likelihood.noise_covar.noise.item()
+        # output_scale = self.gp.covar_module.outputscale.item()
+        # length_scale = self.gp.covar_module.base_kernel.lengthscale.item()
+        # print(f"Final noise: {noise:.2f}")
+        # print(f"Final outputscale: {output_scale:.2f}")
+        # print(f"Final lengthscale: {length_scale:.2f}")
+
         if pbar:
             pbar.close()
+
+        exit(0)
 
         return self.hist_loss
 
