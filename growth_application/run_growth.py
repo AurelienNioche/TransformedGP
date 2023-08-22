@@ -63,11 +63,23 @@ def main():
             theta=theta,
             **init_settings)
 
+        # print("Initial values:")
+        # print(f"Noise: {dm.gp.likelihood.noise.item()}")
+        # print(f"Output scale: {dm.gp.covar_module.outputscale.item()}")
+        # print(f"Length scale: {dm.gp.covar_module.base_kernel.lengthscale.item()}")
+        # print("-" * 10)
+
         dm.train(
             progress_bar=True,
             progress_bar_desc=f"{m.__name__} (model {i+1}/{len(model_list)})",
             seed=seed_dm_train,
             **train_settings)
+
+        print("After training:")
+        print(f"Noise: {dm.gp.likelihood.noise.item()}")
+        print(f"Output scale: {dm.gp.covar_module.outputscale.item()}")
+        print(f"Length scale: {dm.gp.covar_module.base_kernel.lengthscale.item()}")
+        print("-" * 10)
 
         result_list.append({
             "dm": dill.dumps(dm),

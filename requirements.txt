@@ -6,7 +6,7 @@ pandas
 dill
 torch
 gpytorch
-sklearn
+scikit-learn
 tqdm
 seaborn
 gitpython
