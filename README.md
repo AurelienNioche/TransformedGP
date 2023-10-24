@@ -1,4 +1,4 @@
-# CogModelDiscrepancy
+# TransformedGP
 
 To reproduce the human growth results (CaseStudy I):
     
